@@ -1,0 +1,772 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		AA100000000000000000001 /* MC_SanteApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000001 /* MC_SanteApp.swift */; };
+		AA100000000000000000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000002 /* ContentView.swift */; };
+		AA100000000000000000003 /* TrackingCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000003 /* TrackingCategory.swift */; };
+		AA100000000000000000004 /* DailyEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000004 /* DailyEntry.swift */; };
+		AA100000000000000000005 /* DailySnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000005 /* DailySnapshot.swift */; };
+		AA100000000000000000006 /* CorrelationResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000006 /* CorrelationResult.swift */; };
+		AA100000000000000000007 /* HealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000007 /* HealthKitService.swift */; };
+		AA100000000000000000008 /* WeatherDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000008 /* WeatherDataService.swift */; };
+		AA100000000000000000009 /* SnapshotService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000009 /* SnapshotService.swift */; };
+		AA10000000000000000000A /* CorrelationEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000A /* CorrelationEngine.swift */; };
+		AA10000000000000000000B /* SeedDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000B /* SeedDataService.swift */; };
+		AA10000000000000000000C /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000C /* NotificationService.swift */; };
+		AA10000000000000000000D /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000D /* HomeViewModel.swift */; };
+		AA10000000000000000000E /* LogViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000E /* LogViewModel.swift */; };
+		AA10000000000000000000F /* TrendsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000F /* TrendsViewModel.swift */; };
+		AA100000000000000000010 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000010 /* SettingsViewModel.swift */; };
+		AA100000000000000000011 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000011 /* HomeView.swift */; };
+		AA100000000000000000012 /* MetricCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000012 /* MetricCard.swift */; };
+		AA100000000000000000013 /* InsightCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000013 /* InsightCard.swift */; };
+		AA100000000000000000014 /* LogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000014 /* LogView.swift */; };
+		AA100000000000000000015 /* CounterInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000015 /* CounterInput.swift */; };
+		AA100000000000000000016 /* BooleanToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000016 /* BooleanToggle.swift */; };
+		AA100000000000000000017 /* ScaleSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000017 /* ScaleSelector.swift */; };
+		AA100000000000000000018 /* DayNoteField.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000018 /* DayNoteField.swift */; };
+		AA100000000000000000019 /* TrendsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000019 /* TrendsView.swift */; };
+		AA10000000000000000001A /* CorrelationChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000001A /* CorrelationChartView.swift */; };
+		AA10000000000000000001B /* CorrelationRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000001B /* CorrelationRow.swift */; };
+		AA10000000000000000001C /* TimeWindowPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000001C /* TimeWindowPicker.swift */; };
+		AA10000000000000000001D /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000001D /* SettingsView.swift */; };
+		AA10000000000000000001E /* CategoryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000001E /* CategoryListView.swift */; };
+		AA10000000000000000001F /* CategoryEditorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000001F /* CategoryEditorSheet.swift */; };
+		AA100000000000000000020 /* DataSourcesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000020 /* DataSourcesView.swift */; };
+		AA100000000000000000021 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000021 /* OnboardingView.swift */; };
+		AA100000000000000000022 /* EmojiPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000022 /* EmojiPicker.swift */; };
+		AA100000000000000000023 /* CalendarStrip.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000023 /* CalendarStrip.swift */; };
+		AA100000000000000000024 /* Date+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000024 /* Date+Helpers.swift */; };
+		AA100000000000000000025 /* Double+Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000025 /* Double+Formatting.swift */; };
+		AA100000000000000000026 /* Color+Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000026 /* Color+Theme.swift */; };
+		AA100000000000000000027 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000027 /* Assets.xcassets */; };
+		AA100000000000000000028 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000028 /* Localizable.strings */; };
+		/* Widget build files */
+		AA100000000000000000030 /* MCSanteWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000030 /* MCSanteWidget.swift */; };
+		AA100000000000000000031 /* MCSanteWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000031 /* MCSanteWidgetBundle.swift */; };
+		/* Widget also needs the models */
+		AA100000000000000000032 /* TrackingCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000003 /* TrackingCategory.swift */; };
+		AA100000000000000000033 /* DailyEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000004 /* DailyEntry.swift */; };
+		AA100000000000000000034 /* DailySnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000005 /* DailySnapshot.swift */; };
+		AA100000000000000000035 /* CorrelationResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000006 /* CorrelationResult.swift */; };
+		AA100000000000000000036 /* Double+Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000025 /* Double+Formatting.swift */; };
+		AA100000000000000000037 /* Date+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000024 /* Date+Helpers.swift */; };
+		AA100000000000000000038 /* CorrelationEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000A /* CorrelationEngine.swift */; };
+		/* Frameworks */
+		AA100000000000000000040 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000040 /* HealthKit.framework */; };
+		AA100000000000000000041 /* WeatherKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000041 /* WeatherKit.framework */; };
+		AA100000000000000000042 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000042 /* WidgetKit.framework */; };
+		AA100000000000000000043 /* AppIntents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000043 /* AppIntents.framework */; };
+		/* Embed widget extension */
+		AA100000000000000000050 /* MC-SanteWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = AA000000000000000000051 /* MC-SanteWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		AA400000000000000000007 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				AA100000000000000000050 /* MC-SanteWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		AA000000000000000000001 /* MC_SanteApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MC_SanteApp.swift; sourceTree = "<group>"; };
+		AA000000000000000000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		AA000000000000000000003 /* TrackingCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingCategory.swift; sourceTree = "<group>"; };
+		AA000000000000000000004 /* DailyEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyEntry.swift; sourceTree = "<group>"; };
+		AA000000000000000000005 /* DailySnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailySnapshot.swift; sourceTree = "<group>"; };
+		AA000000000000000000006 /* CorrelationResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorrelationResult.swift; sourceTree = "<group>"; };
+		AA000000000000000000007 /* HealthKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitService.swift; sourceTree = "<group>"; };
+		AA000000000000000000008 /* WeatherDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherDataService.swift; sourceTree = "<group>"; };
+		AA000000000000000000009 /* SnapshotService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotService.swift; sourceTree = "<group>"; };
+		AA00000000000000000000A /* CorrelationEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorrelationEngine.swift; sourceTree = "<group>"; };
+		AA00000000000000000000B /* SeedDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedDataService.swift; sourceTree = "<group>"; };
+		AA00000000000000000000C /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		AA00000000000000000000D /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		AA00000000000000000000E /* LogViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogViewModel.swift; sourceTree = "<group>"; };
+		AA00000000000000000000F /* TrendsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrendsViewModel.swift; sourceTree = "<group>"; };
+		AA000000000000000000010 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		AA000000000000000000011 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		AA000000000000000000012 /* MetricCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricCard.swift; sourceTree = "<group>"; };
+		AA000000000000000000013 /* InsightCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightCard.swift; sourceTree = "<group>"; };
+		AA000000000000000000014 /* LogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogView.swift; sourceTree = "<group>"; };
+		AA000000000000000000015 /* CounterInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CounterInput.swift; sourceTree = "<group>"; };
+		AA000000000000000000016 /* BooleanToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooleanToggle.swift; sourceTree = "<group>"; };
+		AA000000000000000000017 /* ScaleSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleSelector.swift; sourceTree = "<group>"; };
+		AA000000000000000000018 /* DayNoteField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayNoteField.swift; sourceTree = "<group>"; };
+		AA000000000000000000019 /* TrendsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrendsView.swift; sourceTree = "<group>"; };
+		AA00000000000000000001A /* CorrelationChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorrelationChartView.swift; sourceTree = "<group>"; };
+		AA00000000000000000001B /* CorrelationRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorrelationRow.swift; sourceTree = "<group>"; };
+		AA00000000000000000001C /* TimeWindowPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeWindowPicker.swift; sourceTree = "<group>"; };
+		AA00000000000000000001D /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		AA00000000000000000001E /* CategoryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryListView.swift; sourceTree = "<group>"; };
+		AA00000000000000000001F /* CategoryEditorSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryEditorSheet.swift; sourceTree = "<group>"; };
+		AA000000000000000000020 /* DataSourcesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourcesView.swift; sourceTree = "<group>"; };
+		AA000000000000000000021 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		AA000000000000000000022 /* EmojiPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiPicker.swift; sourceTree = "<group>"; };
+		AA000000000000000000023 /* CalendarStrip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarStrip.swift; sourceTree = "<group>"; };
+		AA000000000000000000024 /* Date+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Helpers.swift"; sourceTree = "<group>"; };
+		AA000000000000000000025 /* Double+Formatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Double+Formatting.swift"; sourceTree = "<group>"; };
+		AA000000000000000000026 /* Color+Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Theme.swift"; sourceTree = "<group>"; };
+		AA000000000000000000027 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		AA000000000000000000028 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
+		AA000000000000000000029 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AA00000000000000000002A /* MC_Sante.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MC_Sante.entitlements; sourceTree = "<group>"; };
+		/* Widget */
+		AA000000000000000000030 /* MCSanteWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCSanteWidget.swift; sourceTree = "<group>"; };
+		AA000000000000000000031 /* MCSanteWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCSanteWidgetBundle.swift; sourceTree = "<group>"; };
+		AA000000000000000000032 /* Widget-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AA000000000000000000033 /* MC_SanteWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MC_SanteWidget.entitlements; sourceTree = "<group>"; };
+		/* System frameworks */
+		AA000000000000000000040 /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
+		AA000000000000000000041 /* WeatherKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WeatherKit.framework; path = System/Library/Frameworks/WeatherKit.framework; sourceTree = SDKROOT; };
+		AA000000000000000000042 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		AA000000000000000000043 /* AppIntents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppIntents.framework; path = System/Library/Frameworks/AppIntents.framework; sourceTree = SDKROOT; };
+		/* Products */
+		AA000000000000000000050 /* MC-Sante.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MC-Sante.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA000000000000000000051 /* MC-SanteWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "MC-SanteWidget.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AA400000000000000000001 /* Frameworks (app) */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA100000000000000000040 /* HealthKit.framework in Frameworks */,
+				AA100000000000000000041 /* WeatherKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA400000000000000000004 /* Frameworks (widget) */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA100000000000000000042 /* WidgetKit.framework in Frameworks */,
+				AA100000000000000000043 /* AppIntents.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		AA200000000000000000001 /* = */ = {
+			isa = PBXGroup;
+			children = (
+				AA200000000000000000003 /* MC-Sante */,
+				AA200000000000000000004 /* MC-SanteWidget */,
+				AA200000000000000000002 /* Frameworks */,
+				AA200000000000000000005 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AA200000000000000000002 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				AA000000000000000000040 /* HealthKit.framework */,
+				AA000000000000000000041 /* WeatherKit.framework */,
+				AA000000000000000000042 /* WidgetKit.framework */,
+				AA000000000000000000043 /* AppIntents.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		AA200000000000000000005 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AA000000000000000000050 /* MC-Sante.app */,
+				AA000000000000000000051 /* MC-SanteWidget.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AA200000000000000000003 /* MC-Sante */ = {
+			isa = PBXGroup;
+			children = (
+				AA000000000000000000001 /* MC_SanteApp.swift */,
+				AA000000000000000000002 /* ContentView.swift */,
+				AA200000000000000000010 /* Models */,
+				AA200000000000000000011 /* Services */,
+				AA200000000000000000012 /* ViewModels */,
+				AA200000000000000000013 /* Views */,
+				AA200000000000000000018 /* Extensions */,
+				AA000000000000000000027 /* Assets.xcassets */,
+				AA000000000000000000028 /* Localizable.strings */,
+				AA000000000000000000029 /* Info.plist */,
+				AA00000000000000000002A /* MC_Sante.entitlements */,
+			);
+			path = "MC-Sante";
+			sourceTree = "<group>";
+		};
+		AA200000000000000000010 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				AA000000000000000000003 /* TrackingCategory.swift */,
+				AA000000000000000000004 /* DailyEntry.swift */,
+				AA000000000000000000005 /* DailySnapshot.swift */,
+				AA000000000000000000006 /* CorrelationResult.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		AA200000000000000000011 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				AA000000000000000000007 /* HealthKitService.swift */,
+				AA000000000000000000008 /* WeatherDataService.swift */,
+				AA000000000000000000009 /* SnapshotService.swift */,
+				AA00000000000000000000A /* CorrelationEngine.swift */,
+				AA00000000000000000000B /* SeedDataService.swift */,
+				AA00000000000000000000C /* NotificationService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		AA200000000000000000012 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				AA00000000000000000000D /* HomeViewModel.swift */,
+				AA00000000000000000000E /* LogViewModel.swift */,
+				AA00000000000000000000F /* TrendsViewModel.swift */,
+				AA000000000000000000010 /* SettingsViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		AA200000000000000000013 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				AA200000000000000000014 /* Home */,
+				AA200000000000000000015 /* Log */,
+				AA200000000000000000016 /* Trends */,
+				AA200000000000000000017 /* Settings */,
+				AA200000000000000000019 /* Onboarding */,
+				AA20000000000000000001A /* Shared */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		AA200000000000000000014 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				AA000000000000000000011 /* HomeView.swift */,
+				AA000000000000000000012 /* MetricCard.swift */,
+				AA000000000000000000013 /* InsightCard.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		AA200000000000000000015 /* Log */ = {
+			isa = PBXGroup;
+			children = (
+				AA000000000000000000014 /* LogView.swift */,
+				AA000000000000000000015 /* CounterInput.swift */,
+				AA000000000000000000016 /* BooleanToggle.swift */,
+				AA000000000000000000017 /* ScaleSelector.swift */,
+				AA000000000000000000018 /* DayNoteField.swift */,
+			);
+			path = Log;
+			sourceTree = "<group>";
+		};
+		AA200000000000000000016 /* Trends */ = {
+			isa = PBXGroup;
+			children = (
+				AA000000000000000000019 /* TrendsView.swift */,
+				AA00000000000000000001A /* CorrelationChartView.swift */,
+				AA00000000000000000001B /* CorrelationRow.swift */,
+				AA00000000000000000001C /* TimeWindowPicker.swift */,
+			);
+			path = Trends;
+			sourceTree = "<group>";
+		};
+		AA200000000000000000017 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				AA00000000000000000001D /* SettingsView.swift */,
+				AA00000000000000000001E /* CategoryListView.swift */,
+				AA00000000000000000001F /* CategoryEditorSheet.swift */,
+				AA000000000000000000020 /* DataSourcesView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		AA200000000000000000019 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				AA000000000000000000021 /* OnboardingView.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		AA20000000000000000001A /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				AA000000000000000000022 /* EmojiPicker.swift */,
+				AA000000000000000000023 /* CalendarStrip.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		AA200000000000000000018 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				AA000000000000000000024 /* Date+Helpers.swift */,
+				AA000000000000000000025 /* Double+Formatting.swift */,
+				AA000000000000000000026 /* Color+Theme.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		AA200000000000000000004 /* MC-SanteWidget */ = {
+			isa = PBXGroup;
+			children = (
+				AA000000000000000000030 /* MCSanteWidget.swift */,
+				AA000000000000000000031 /* MCSanteWidgetBundle.swift */,
+				AA000000000000000000032 /* Widget-Info.plist */,
+				AA000000000000000000033 /* MC_SanteWidget.entitlements */,
+			);
+			path = "MC-SanteWidget";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AA300000000000000000001 /* MC-Sante */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA500000000000000000002 /* Build configuration list for PBXNativeTarget "MC-Sante" */;
+			buildPhases = (
+				AA400000000000000000001 /* Frameworks (app) */,
+				AA400000000000000000002 /* Sources (app) */,
+				AA400000000000000000003 /* Resources (app) */,
+				AA400000000000000000007 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AA300000000000000000003 /* PBXTargetDependency */,
+			);
+			name = "MC-Sante";
+			productName = "MC-Sante";
+			productReference = AA000000000000000000050 /* MC-Sante.app */;
+			productType = "com.apple.product-type.application";
+		};
+		AA300000000000000000002 /* MC-SanteWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA500000000000000000003 /* Build configuration list for PBXNativeTarget "MC-SanteWidget" */;
+			buildPhases = (
+				AA400000000000000000004 /* Frameworks (widget) */,
+				AA400000000000000000005 /* Sources (widget) */,
+				AA400000000000000000006 /* Resources (widget) */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "MC-SanteWidget";
+			productName = "MC-SanteWidget";
+			productReference = AA000000000000000000051 /* MC-SanteWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AA600000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1540;
+				LastUpgradeCheck = 1540;
+				TargetAttributes = {
+					AA300000000000000000001 = {
+						CreatedOnToolsVersion = 15.4;
+					};
+					AA300000000000000000002 = {
+						CreatedOnToolsVersion = 15.4;
+					};
+				};
+			};
+			buildConfigurationList = AA500000000000000000001 /* Build configuration list for PBXProject "MC-Sante" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = fr;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				fr,
+				Base,
+			);
+			mainGroup = AA200000000000000000001;
+			productRefGroup = AA200000000000000000005 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AA300000000000000000001 /* MC-Sante */,
+				AA300000000000000000002 /* MC-SanteWidget */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AA400000000000000000003 /* Resources (app) */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA100000000000000000027 /* Assets.xcassets in Resources */,
+				AA100000000000000000028 /* Localizable.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA400000000000000000006 /* Resources (widget) */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AA400000000000000000002 /* Sources (app) */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA100000000000000000001 /* MC_SanteApp.swift in Sources */,
+				AA100000000000000000002 /* ContentView.swift in Sources */,
+				AA100000000000000000003 /* TrackingCategory.swift in Sources */,
+				AA100000000000000000004 /* DailyEntry.swift in Sources */,
+				AA100000000000000000005 /* DailySnapshot.swift in Sources */,
+				AA100000000000000000006 /* CorrelationResult.swift in Sources */,
+				AA100000000000000000007 /* HealthKitService.swift in Sources */,
+				AA100000000000000000008 /* WeatherDataService.swift in Sources */,
+				AA100000000000000000009 /* SnapshotService.swift in Sources */,
+				AA10000000000000000000A /* CorrelationEngine.swift in Sources */,
+				AA10000000000000000000B /* SeedDataService.swift in Sources */,
+				AA10000000000000000000C /* NotificationService.swift in Sources */,
+				AA10000000000000000000D /* HomeViewModel.swift in Sources */,
+				AA10000000000000000000E /* LogViewModel.swift in Sources */,
+				AA10000000000000000000F /* TrendsViewModel.swift in Sources */,
+				AA100000000000000000010 /* SettingsViewModel.swift in Sources */,
+				AA100000000000000000011 /* HomeView.swift in Sources */,
+				AA100000000000000000012 /* MetricCard.swift in Sources */,
+				AA100000000000000000013 /* InsightCard.swift in Sources */,
+				AA100000000000000000014 /* LogView.swift in Sources */,
+				AA100000000000000000015 /* CounterInput.swift in Sources */,
+				AA100000000000000000016 /* BooleanToggle.swift in Sources */,
+				AA100000000000000000017 /* ScaleSelector.swift in Sources */,
+				AA100000000000000000018 /* DayNoteField.swift in Sources */,
+				AA100000000000000000019 /* TrendsView.swift in Sources */,
+				AA10000000000000000001A /* CorrelationChartView.swift in Sources */,
+				AA10000000000000000001B /* CorrelationRow.swift in Sources */,
+				AA10000000000000000001C /* TimeWindowPicker.swift in Sources */,
+				AA10000000000000000001D /* SettingsView.swift in Sources */,
+				AA10000000000000000001E /* CategoryListView.swift in Sources */,
+				AA10000000000000000001F /* CategoryEditorSheet.swift in Sources */,
+				AA100000000000000000020 /* DataSourcesView.swift in Sources */,
+				AA100000000000000000021 /* OnboardingView.swift in Sources */,
+				AA100000000000000000022 /* EmojiPicker.swift in Sources */,
+				AA100000000000000000023 /* CalendarStrip.swift in Sources */,
+				AA100000000000000000024 /* Date+Helpers.swift in Sources */,
+				AA100000000000000000025 /* Double+Formatting.swift in Sources */,
+				AA100000000000000000026 /* Color+Theme.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA400000000000000000005 /* Sources (widget) */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA100000000000000000030 /* MCSanteWidget.swift in Sources */,
+				AA100000000000000000031 /* MCSanteWidgetBundle.swift in Sources */,
+				AA100000000000000000032 /* TrackingCategory.swift in Sources */,
+				AA100000000000000000033 /* DailyEntry.swift in Sources */,
+				AA100000000000000000034 /* DailySnapshot.swift in Sources */,
+				AA100000000000000000035 /* CorrelationResult.swift in Sources */,
+				AA100000000000000000036 /* Double+Formatting.swift in Sources */,
+				AA100000000000000000037 /* Date+Helpers.swift in Sources */,
+				AA100000000000000000038 /* CorrelationEngine.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		AA300000000000000000003 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AA300000000000000000002 /* MC-SanteWidget */;
+			targetProxy = AA300000000000000000004 /* PBXContainerItemProxy */;
+		};
+		AA300000000000000000004 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA600000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AA300000000000000000002;
+			remoteInfo = "MC-SanteWidget";
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		AA500000000000000000004 /* Debug (Project) */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_CYCLE = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		AA500000000000000000005 /* Release (Project) */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_CYCLE = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		AA500000000000000000006 /* Debug (App Target) */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "MC-Sante/MC_Sante.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "MC-Sante/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mcsante.app";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		AA500000000000000000007 /* Release (App Target) */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "MC-Sante/MC_Sante.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "MC-Sante/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mcsante.app";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		AA500000000000000000008 /* Debug (Widget Target) */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "MC-SanteWidget/MC_SanteWidget.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "MC-SanteWidget/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mcsante.app.widget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		AA500000000000000000009 /* Release (Widget Target) */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "MC-SanteWidget/MC_SanteWidget.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "MC-SanteWidget/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mcsante.app.widget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AA500000000000000000001 /* Build configuration list for PBXProject "MC-Sante" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA500000000000000000004 /* Debug (Project) */,
+				AA500000000000000000005 /* Release (Project) */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AA500000000000000000002 /* Build configuration list for PBXNativeTarget "MC-Sante" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA500000000000000000006 /* Debug (App Target) */,
+				AA500000000000000000007 /* Release (App Target) */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AA500000000000000000003 /* Build configuration list for PBXNativeTarget "MC-SanteWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA500000000000000000008 /* Debug (Widget Target) */,
+				AA500000000000000000009 /* Release (Widget Target) */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+	};
+	rootObject = AA600000000000000000001 /* Project object */;
+}
