@@ -10,6 +10,8 @@ final class TrendsViewModel {
     var daysUntilReady: Int = 0
     var hasNewCorrelation = false
 
+    private(set) var cachedSeries: [MetricSeries] = []
+
     // MARK: Compute
 
     @MainActor
@@ -47,6 +49,7 @@ final class TrendsViewModel {
             entries: entries,
             categories: categories
         )
+        cachedSeries = series
         let results = CorrelationEngine.computeAll(
             series: series,
             windowDays: selectedWindow,
@@ -79,26 +82,16 @@ final class TrendsViewModel {
 
     // MARK: Series for chart
 
-    func seriesFor(
-        result: CorrelationResult,
-        snapshots: [DailySnapshot],
-        entries: [DailyEntry],
-        categories: [TrackingCategory]
-    ) -> (a: [(Date, Double)], b: [(Date, Double)])? {
-        let allSeries = CorrelationEngine.extractAllSeries(
-            snapshots: snapshots,
-            entries: entries,
-            categories: categories
-        )
+    func seriesFor(result: CorrelationResult) -> (a: [(Date, Double)], b: [(Date, Double)])? {
         guard
-            let seriesA = allSeries.first(where: { $0.name == result.metricA }),
-            let seriesB = allSeries.first(where: { $0.name == result.metricB })
+            let seriesA = cachedSeries.first(where: { $0.name == result.metricA }),
+            let seriesB = cachedSeries.first(where: { $0.name == result.metricB })
         else { return nil }
 
         let cal = Calendar.current
-        let cutoff = cal.startOfDay(
-            for: cal.date(byAdding: .day, value: -selectedWindow, to: .now)!
-        )
+        let cutoffBase = cal.date(byAdding: .day, value: -selectedWindow, to: .now) ?? .now
+        let cutoff = cal.startOfDay(for: cutoffBase)
+
         let a = seriesA.values.filter { $0.key >= cutoff }.map { ($0.key, $0.value) }
             .sorted { $0.0 < $1.0 }
         let b = seriesB.values.filter { $0.key >= cutoff }.map { ($0.key, $0.value) }

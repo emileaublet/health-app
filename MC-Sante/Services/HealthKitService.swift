@@ -76,18 +76,18 @@ final class HealthKitService {
 
     func fetchSleepData(for date: Date) async -> SleepData? {
         let sleepType = HKCategoryType(.sleepAnalysis)
+        let cal = Calendar.current
 
-        // Fenêtre 18h la veille → 12h du jour (capture la nuit complète)
-        let sleepStart = Calendar.current.date(
-            bySettingHour: 18, minute: 0, second: 0,
-            of: date.addingTimeInterval(-86400)
-        )!
-        let sleepEnd = Calendar.current.date(
-            bySettingHour: 12, minute: 0, second: 0,
-            of: date
-        )!
+        // Window: 18h the evening before → 12h of the given day (captures full night)
+        guard
+            let previousEvening = cal.date(
+                bySettingHour: 18, minute: 0, second: 0,
+                of: date.addingTimeInterval(-86400)
+            ),
+            let sleepEnd = cal.date(bySettingHour: 12, minute: 0, second: 0, of: date)
+        else { return nil }
 
-        let predicate = HKQuery.predicateForSamples(withStart: sleepStart, end: sleepEnd)
+        let predicate = HKQuery.predicateForSamples(withStart: previousEvening, end: sleepEnd)
         let descriptor = HKSampleQueryDescriptor(
             predicates: [.categorySample(type: sleepType, predicate: predicate)],
             sortDescriptors: [SortDescriptor(\.endDate, order: .reverse)]
@@ -116,7 +116,7 @@ final class HealthKitService {
             case HKCategoryValueSleepAnalysis.asleepUnspecified.rawValue:
                 totalSleep += duration
             default:
-                break // inBed, awake — ignoré
+                break // inBed, awake — ignored
             }
         }
 
@@ -134,24 +134,20 @@ final class HealthKitService {
 
     func fetchHeartData(for date: Date) async -> HeartData? {
         async let resting = fetchLatestQuantity(.restingHeartRate, for: date, unit: .count().unitDivided(by: .minute()))
-        async let hrv = fetchLatestQuantity(.heartRateVariabilitySDNN, for: date, unit: .secondUnit(with: .milli))
-        async let avg = fetchAverageQuantity(.heartRate, for: date, unit: .count().unitDivided(by: .minute()))
+        async let hrv     = fetchLatestQuantity(.heartRateVariabilitySDNN, for: date, unit: .secondUnit(with: .milli))
+        async let avg     = fetchAverageQuantity(.heartRate, for: date, unit: .count().unitDivided(by: .minute()))
 
         let (r, h, a) = await (resting, hrv, avg)
         guard r != nil || h != nil || a != nil else { return nil }
 
-        return HeartData(
-            resting: r ?? 0,
-            hrv: h ?? 0,
-            average: a ?? 0
-        )
+        return HeartData(resting: r ?? 0, hrv: h ?? 0, average: a ?? 0)
     }
 
     // MARK: Activity
 
     func fetchActivityData(for date: Date) async -> ActivityData? {
         async let calories = fetchSumQuantity(.activeEnergyBurned, for: date, unit: .kilocalorie())
-        async let minutes = fetchSumQuantity(.appleExerciseTime, for: date, unit: .minute())
+        async let minutes  = fetchSumQuantity(.appleExerciseTime,  for: date, unit: .minute())
 
         let (c, m) = await (calories, minutes)
         guard c != nil || m != nil else { return nil }
@@ -205,10 +201,11 @@ final class HealthKitService {
     // MARK: State of Mind (iOS 18+)
 
     func fetchStateOfMind(for date: Date) async -> StateOfMindData? {
-        let predicate = HKQuery.predicateForSamples(
-            withStart: Calendar.current.startOfDay(for: date),
-            end: Calendar.current.date(byAdding: .day, value: 1, to: Calendar.current.startOfDay(for: date))!
-        )
+        let cal = Calendar.current
+        let start = cal.startOfDay(for: date)
+        guard let end = cal.date(byAdding: .day, value: 1, to: start) else { return nil }
+
+        let predicate = HKQuery.predicateForSamples(withStart: start, end: end)
         let descriptor = HKSampleQueryDescriptor(
             predicates: [.stateOfMind(predicate)],
             sortDescriptors: [SortDescriptor(\.endDate, order: .reverse)],
@@ -238,7 +235,7 @@ final class HealthKitService {
 
     private func dayPredicate(for date: Date) -> NSPredicate {
         let start = Calendar.current.startOfDay(for: date)
-        let end = Calendar.current.date(byAdding: .day, value: 1, to: start)!
+        let end = Calendar.current.date(byAdding: .day, value: 1, to: start) ?? start.addingTimeInterval(86400)
         return HKQuery.predicateForSamples(withStart: start, end: end)
     }
 
@@ -266,7 +263,7 @@ final class HealthKitService {
     ) async -> Double? {
         let type = HKQuantityType(identifier)
         let start = Calendar.current.startOfDay(for: date)
-        let end = Calendar.current.date(byAdding: .day, value: 1, to: start)!
+        let end = Calendar.current.date(byAdding: .day, value: 1, to: start) ?? start.addingTimeInterval(86400)
         let predicate = HKQuery.predicateForSamples(withStart: start, end: end)
 
         let descriptor = HKStatisticsQueryDescriptor(
@@ -285,7 +282,7 @@ final class HealthKitService {
     ) async -> Double? {
         let type = HKQuantityType(identifier)
         let start = Calendar.current.startOfDay(for: date)
-        let end = Calendar.current.date(byAdding: .day, value: 1, to: start)!
+        let end = Calendar.current.date(byAdding: .day, value: 1, to: start) ?? start.addingTimeInterval(86400)
         let predicate = HKQuery.predicateForSamples(withStart: start, end: end)
 
         let descriptor = HKStatisticsQueryDescriptor(

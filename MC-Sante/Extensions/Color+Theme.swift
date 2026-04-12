@@ -1,12 +1,12 @@
 import SwiftUI
 
 extension Color {
-    // MARK: Brand colours
-    static let mcPrimary    = Color("MCPrimary",    bundle: nil)
-    static let mcSecondary  = Color("MCSecondary",  bundle: nil)
-    static let mcAccent     = Color("MCAccent",     bundle: nil)
-    static let mcBackground = Color("MCBackground", bundle: nil)
-    static let mcCard       = Color("MCCard",       bundle: nil)
+    // MARK: Brand colours (system-native, no asset dependency)
+    static let mcPrimary    = Color.accentColor
+    static let mcSecondary  = Color(.secondaryLabel)
+    static let mcAccent     = Color.accentColor
+    static let mcBackground = Color(.systemBackground)
+    static let mcCard       = Color(.secondarySystemBackground)
 
     // MARK: Metric colours
     static let sleepColor    = Color.indigo

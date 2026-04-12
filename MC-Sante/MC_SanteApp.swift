@@ -4,10 +4,10 @@ import BackgroundTasks
 
 @main
 struct MC_SanteApp: App {
-    // MARK: Services (singleton instances shared across the app)
-    @State private var healthKit      = HealthKitService()
-    @State private var weatherService = WeatherDataService()
-    @State private var notifications  = NotificationService()
+    // MARK: Services — declared without default values to avoid double-init
+    @State private var healthKit: HealthKitService
+    @State private var weatherService: WeatherDataService
+    @State private var notifications: NotificationService
     @State private var snapshotService: SnapshotService
 
     init() {

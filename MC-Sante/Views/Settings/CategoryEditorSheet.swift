@@ -5,6 +5,7 @@ struct CategoryEditorSheet: View {
     var existing: TrackingCategory? = nil
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
 
     @State private var name: String = ""
     @State private var emoji: String = "📊"
@@ -70,6 +71,7 @@ struct CategoryEditorSheet: View {
                             cat.name = name
                             cat.emoji = emoji
                             cat.dataType = dataType
+                            try? modelContext.save()
                         } else {
                             viewModel.createCategory(
                                 name: name,

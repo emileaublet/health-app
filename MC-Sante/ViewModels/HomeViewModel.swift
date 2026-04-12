@@ -66,7 +66,8 @@ final class HomeViewModel {
         for snapshot in snapshots {
             if snapshot.date == currentDate {
                 streak += 1
-                currentDate = Calendar.current.date(byAdding: .day, value: -1, to: currentDate)!
+                guard let prev = Calendar.current.date(byAdding: .day, value: -1, to: currentDate) else { break }
+                currentDate = prev
             } else {
                 break
             }
