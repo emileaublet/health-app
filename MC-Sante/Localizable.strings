@@ -1,0 +1,29 @@
+/* MC Santé — Localizable.strings (fr-CA) */
+
+/* Tab bar */
+"tab.home"     = "Accueil";
+"tab.log"      = "Saisie";
+"tab.trends"   = "Tendances";
+"tab.settings" = "Réglages";
+
+/* Correlation strengths */
+"strength.weak"     = "Faible";
+"strength.moderate" = "Modérée";
+"strength.strong"   = "Forte";
+
+/* Data types */
+"datatype.counter" = "Compteur";
+"datatype.boolean" = "Oui / Non";
+"datatype.scale"   = "Échelle 1–5";
+
+/* General */
+"general.yes"    = "Oui";
+"general.no"     = "Non";
+"general.cancel" = "Annuler";
+"general.save"   = "Enregistrer";
+"general.close"  = "Fermer";
+"general.today"  = "Aujourd'hui";
+"general.yesterday" = "Hier";
+
+/* Disclaimer */
+"disclaimer" = "⚠️ Ces corrélations sont statistiques et ne prouvent pas de causalité. Consultez un professionnel de santé pour toute décision médicale.";
