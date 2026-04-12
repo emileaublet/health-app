@@ -99,9 +99,8 @@ enum CorrelationEngine {
     ) -> [CorrelationResult] {
         var results: [CorrelationResult] = []
         let cal = Calendar.current
-        let cutoffDate = cal.startOfDay(
-            for: cal.date(byAdding: .day, value: -windowDays, to: .now)!
-        )
+        let cutoffBase = cal.date(byAdding: .day, value: -windowDays, to: .now) ?? .now
+        let cutoffDate = cal.startOfDay(for: cutoffBase)
 
         for i in 0..<series.count {
             for j in (i + 1)..<series.count {
@@ -118,7 +117,7 @@ enum CorrelationEngine {
 
                     for (date, xVal) in a.values {
                         guard date >= cutoffDate else { continue }
-                        let laggedDate = cal.date(byAdding: .day, value: lag, to: date)!
+                        guard let laggedDate = cal.date(byAdding: .day, value: lag, to: date) else { continue }
                         if let yVal = b.values[laggedDate] {
                             xVals.append(xVal)
                             yVals.append(yVal)

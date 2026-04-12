@@ -23,8 +23,12 @@ private struct OpenMeteoCurrent: Decodable {
 }
 
 // MARK: - WeatherDataService
+// @MainActor ensures that all property writes are on the main thread, which
+// is required by the @Observable macro. CLLocationManager delegate callbacks
+// on iOS are delivered on the main thread, so no extra hopping is needed.
 
 @Observable
+@MainActor
 final class WeatherDataService: NSObject {
     private let weatherService = WeatherService()
     private let locationManager = CLLocationManager()
@@ -46,18 +50,16 @@ final class WeatherDataService: NSObject {
     }
 
     func fetchWeather() async -> WeatherSnapshot? {
-        // Essai WeatherKit d'abord
         if let location = locationManager.location ?? cachedLocation {
             if let snapshot = await fetchFromWeatherKit(location: location) {
-                await MainActor.run { lastSnapshot = snapshot }
+                lastSnapshot = snapshot
                 return snapshot
             }
-            // Fallback Open-Meteo
             if let snapshot = await fetchFromOpenMeteo(
                 lat: location.coordinate.latitude,
                 lon: location.coordinate.longitude
             ) {
-                await MainActor.run { lastSnapshot = snapshot }
+                lastSnapshot = snapshot
                 return snapshot
             }
         }
@@ -99,21 +101,28 @@ final class WeatherDataService: NSObject {
 }
 
 // MARK: - CLLocationManagerDelegate
+// On iOS, location delegate callbacks are delivered on the main thread,
+// which satisfies our @MainActor isolation requirement.
 
 extension WeatherDataService: CLLocationManagerDelegate {
-    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        locationAuthStatus = manager.authorizationStatus
-        if manager.authorizationStatus == .authorizedWhenInUse ||
-           manager.authorizationStatus == .authorizedAlways {
-            manager.requestLocation()
+    nonisolated func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        let status = manager.authorizationStatus
+        Task { @MainActor in
+            locationAuthStatus = status
+            if status == .authorizedWhenInUse || status == .authorizedAlways {
+                manager.requestLocation()
+            }
         }
     }
 
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        cachedLocation = locations.last
+    nonisolated func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let location = locations.last else { return }
+        Task { @MainActor in
+            cachedLocation = location
+        }
     }
 
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        // Location failure is non-fatal; fallback to Open-Meteo with last known location
+    nonisolated func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        // Non-fatal — will fall back to Open-Meteo with last known location
     }
 }

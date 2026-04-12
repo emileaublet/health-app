@@ -26,6 +26,7 @@ final class SettingsViewModel {
 
     // MARK: Reminder
 
+    @MainActor
     func applyReminderSettings() async {
         UserDefaults.standard.set(reminderEnabled, forKey: "reminderEnabled")
         UserDefaults.standard.set(reminderHour,    forKey: "reminderHour")

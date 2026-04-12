@@ -19,12 +19,13 @@ final class LogViewModel {
     // MARK: Navigation
 
     func goToPreviousDay() {
-        selectedDate = Calendar.current.date(byAdding: .day, value: -1, to: selectedDate)!
+        guard let prev = Calendar.current.date(byAdding: .day, value: -1, to: selectedDate) else { return }
+        selectedDate = prev
         loadEntriesForCurrentDate()
     }
 
     func goToNextDay() {
-        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: selectedDate)!
+        guard let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: selectedDate) else { return }
         guard tomorrow <= Calendar.current.startOfDay(for: .now) else { return }
         selectedDate = tomorrow
         loadEntriesForCurrentDate()
@@ -35,7 +36,7 @@ final class LogViewModel {
     }
 
     var canGoForward: Bool {
-        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: selectedDate)!
+        guard let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: selectedDate) else { return false }
         return tomorrow <= Calendar.current.startOfDay(for: .now)
     }
 
@@ -83,6 +84,30 @@ final class LogViewModel {
 
     func currentValue(for category: TrackingCategory) -> Double {
         entriesForDate[category.id]?.value ?? defaultValue(for: category.dataType)
+    }
+
+    func setDayNote(_ note: String) {
+        guard let context else { return }
+        let text = note.trimmingCharacters(in: .whitespaces)
+
+        // Prefer updating an entry that already carries a note
+        if let existing = entriesForDate.values.first(where: { $0.note != nil }) {
+            existing.note = text.isEmpty ? nil : text
+            try? context.save()
+            return
+        }
+        // Fall back to any existing entry for this day
+        if let first = entriesForDate.values.first {
+            first.note = text.isEmpty ? nil : text
+            try? context.save()
+            return
+        }
+        // No entries yet — create a note-only entry (category = nil)
+        if !text.isEmpty {
+            let entry = DailyEntry(date: selectedDate, value: 0, note: text)
+            context.insert(entry)
+            try? context.save()
+        }
     }
 
     private func defaultValue(for type: MetricDataType) -> Double {

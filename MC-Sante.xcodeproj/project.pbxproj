@@ -65,6 +65,12 @@
 		AA100000000000000000043 /* AppIntents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000043 /* AppIntents.framework */; };
 		/* Embed widget extension */
 		AA100000000000000000050 /* MC-SanteWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = AA000000000000000000051 /* MC-SanteWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		/* Tests build files */
+		AB100000000000000000001 /* CorrelationEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000001 /* CorrelationEngineTests.swift */; };
+		AB100000000000000000002 /* DoubleFormattingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000002 /* DoubleFormattingTests.swift */; };
+		AB100000000000000000003 /* DateHelpersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000003 /* DateHelpersTests.swift */; };
+		AB100000000000000000004 /* SwiftDataModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000004 /* SwiftDataModelTests.swift */; };
+		AB100000000000000000005 /* CSVExporterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000005 /* CSVExporterTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -137,6 +143,13 @@
 		/* Products */
 		AA000000000000000000050 /* MC-Sante.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MC-Sante.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA000000000000000000051 /* MC-SanteWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "MC-SanteWidget.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		/* Test files */
+		AB000000000000000000001 /* CorrelationEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorrelationEngineTests.swift; sourceTree = "<group>"; };
+		AB000000000000000000002 /* DoubleFormattingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoubleFormattingTests.swift; sourceTree = "<group>"; };
+		AB000000000000000000003 /* DateHelpersTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateHelpersTests.swift; sourceTree = "<group>"; };
+		AB000000000000000000004 /* SwiftDataModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataModelTests.swift; sourceTree = "<group>"; };
+		AB000000000000000000005 /* CSVExporterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVExporterTests.swift; sourceTree = "<group>"; };
+		AB000000000000000000050 /* MC-SanteTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "MC-SanteTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -166,9 +179,22 @@
 			children = (
 				AA200000000000000000003 /* MC-Sante */,
 				AA200000000000000000004 /* MC-SanteWidget */,
+				AB200000000000000000001 /* MC-SanteTests */,
 				AA200000000000000000002 /* Frameworks */,
 				AA200000000000000000005 /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		AB200000000000000000001 /* MC-SanteTests */ = {
+			isa = PBXGroup;
+			children = (
+				AB000000000000000000001 /* CorrelationEngineTests.swift */,
+				AB000000000000000000002 /* DoubleFormattingTests.swift */,
+				AB000000000000000000003 /* DateHelpersTests.swift */,
+				AB000000000000000000004 /* SwiftDataModelTests.swift */,
+				AB000000000000000000005 /* CSVExporterTests.swift */,
+			);
+			path = "MC-SanteTests";
 			sourceTree = "<group>";
 		};
 		AA200000000000000000002 /* Frameworks */ = {
@@ -187,6 +213,7 @@
 			children = (
 				AA000000000000000000050 /* MC-Sante.app */,
 				AA000000000000000000051 /* MC-SanteWidget.appex */,
+				AB000000000000000000050 /* MC-SanteTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -378,6 +405,22 @@
 			productReference = AA000000000000000000051 /* MC-SanteWidget.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		AB300000000000000000001 /* MC-SanteTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AB500000000000000000003 /* Build configuration list for PBXNativeTarget "MC-SanteTests" */;
+			buildPhases = (
+				AB400000000000000000001 /* Sources (tests) */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AB300000000000000000003 /* PBXTargetDependency */,
+			);
+			name = "MC-SanteTests";
+			productName = "MC-SanteTests";
+			productReference = AB000000000000000000050 /* MC-SanteTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -393,6 +436,10 @@
 					};
 					AA300000000000000000002 = {
 						CreatedOnToolsVersion = 15.4;
+					};
+					AB300000000000000000001 = {
+						CreatedOnToolsVersion = 15.4;
+						TestTargetID = AA300000000000000000001;
 					};
 				};
 			};
@@ -411,6 +458,7 @@
 			targets = (
 				AA300000000000000000001 /* MC-Sante */,
 				AA300000000000000000002 /* MC-SanteWidget */,
+				AB300000000000000000001 /* MC-SanteTests */,
 			);
 		};
 /* End PBXProject section */
@@ -496,6 +544,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		AB400000000000000000001 /* Sources (tests) */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AB100000000000000000001 /* CorrelationEngineTests.swift in Sources */,
+				AB100000000000000000002 /* DoubleFormattingTests.swift in Sources */,
+				AB100000000000000000003 /* DateHelpersTests.swift in Sources */,
+				AB100000000000000000004 /* SwiftDataModelTests.swift in Sources */,
+				AB100000000000000000005 /* CSVExporterTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -510,6 +570,18 @@
 			proxyType = 1;
 			remoteGlobalIDString = AA300000000000000000002;
 			remoteInfo = "MC-SanteWidget";
+		};
+		AB300000000000000000003 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AA300000000000000000001 /* MC-Sante */;
+			targetProxy = AB300000000000000000002 /* PBXContainerItemProxy */;
+		};
+		AB300000000000000000002 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA600000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AA300000000000000000001;
+			remoteInfo = "MC-Sante";
 		};
 /* End PBXTargetDependency section */
 
@@ -735,6 +807,44 @@
 			};
 			name = Release;
 		};
+		AB500000000000000000001 /* Debug (Tests Target) */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mcsante.app.tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MC-Sante.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/MC-Sante";
+			};
+			name = Debug;
+		};
+		AB500000000000000000002 /* Release (Tests Target) */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mcsante.app.tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MC-Sante.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/MC-Sante";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -761,6 +871,15 @@
 			buildConfigurations = (
 				AA500000000000000000008 /* Debug (Widget Target) */,
 				AA500000000000000000009 /* Release (Widget Target) */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AB500000000000000000003 /* Build configuration list for PBXNativeTarget "MC-SanteTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AB500000000000000000001 /* Debug (Tests Target) */,
+				AB500000000000000000002 /* Release (Tests Target) */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

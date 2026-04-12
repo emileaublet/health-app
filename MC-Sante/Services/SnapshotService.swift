@@ -82,7 +82,7 @@ final class SnapshotService {
     @MainActor
     func buildRecentSnapshots(context: ModelContext) async {
         for daysAgo in 0..<7 {
-            let date = Calendar.current.date(byAdding: .day, value: -daysAgo, to: .now)!
+            guard let date = Calendar.current.date(byAdding: .day, value: -daysAgo, to: .now) else { continue }
             await buildSnapshot(for: date, context: context)
         }
     }

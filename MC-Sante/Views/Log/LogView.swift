@@ -109,7 +109,7 @@ struct LogView: View {
     private var noteSection: some View {
         DayNoteField(text: Binding(
             get: { viewModel.entriesForDate.values.first(where: { $0.note != nil })?.note ?? "" },
-            set: { _ in }
+            set: { viewModel.setDayNote($0) }
         ))
     }
 }

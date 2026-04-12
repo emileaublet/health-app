@@ -6,12 +6,6 @@ struct TrendsView: View {
     @State private var viewModel = TrendsViewModel()
     @State private var selectedCorrelation: CorrelationResult?
 
-    // For chart detail
-    @Query private var snapshots: [DailySnapshot]
-    @Query private var entries: [DailyEntry]
-    @Query(filter: #Predicate<TrackingCategory> { $0.isActive == true })
-    private var categories: [TrackingCategory]
-
     var body: some View {
         NavigationStack {
             Group {
@@ -126,12 +120,7 @@ struct TrendsView: View {
                     InsightCard(insight: result)
 
                     // Chart
-                    if let series = viewModel.seriesFor(
-                        result: result,
-                        snapshots: snapshots,
-                        entries: entries,
-                        categories: categories
-                    ) {
+                    if let series = viewModel.seriesFor(result: result) {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Visualisation")
                                 .font(.headline)
