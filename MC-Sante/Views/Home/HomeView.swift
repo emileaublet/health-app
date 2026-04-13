@@ -177,180 +177,176 @@ struct HomeView: View {
         .padding()
     }
 
-    // MARK: Bar chart helpers
+    // MARK: Section card helpers
 
-    private func barData(_ keyPath: KeyPath<DailySnapshot, Double?>) -> [Double] {
-        viewModel.recentSnapshots.map { $0[keyPath: keyPath] ?? 0 }
+    /// Inline legend dot + label for multi-series charts.
+    private func legendDot(_ color: Color, _ label: String) -> some View {
+        HStack(spacing: 4) {
+            Circle().fill(color).frame(width: 7, height: 7)
+            Text(label).foregroundStyle(.secondary)
+        }
     }
 
-    /// Index of the selected day within recentSnapshots (for highlight)
-    private var currentDayBarIndex: Int? {
-        let day = viewModel.selectedDate
-        return viewModel.recentSnapshots.firstIndex { Calendar.current.isDate($0.date, inSameDayAs: day) }
-    }
+    private var hasChartData: Bool { viewModel.recentSnapshots.count >= 2 }
 
     // MARK: Sommeil
 
     private var sleepSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            sectionHeader(L10n.sectionSleep, icon: "moon.fill")
-
-            let snap = viewModel.todaySnapshot
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
-                if let hours = snap?.sleepDurationHours {
-                    MetricCard(
-                        emoji: "😴",
-                        title: L10n.totalDuration,
-                        value: hours.hoursMinutesString,
-                        subtitle: nil,
-                        accentColor: .sleepColor,
-                        sparklineData: barData(\.sleepDurationHours),
-                        highlightIndex: currentDayBarIndex
-                    )
-                } else {
-                    MetricCardMissing(emoji: "😴", title: L10n.totalDuration)
+        let snap = viewModel.todaySnapshot
+        return VStack(alignment: .leading, spacing: 14) {
+            // Header + legend
+            HStack {
+                sectionHeader(L10n.sectionSleep, icon: "moon.fill")
+                Spacer()
+                HStack(spacing: 10) {
+                    legendDot(.indigo, "REM")
+                    legendDot(.blue,   L10n.deepSleep)
+                    legendDot(.teal,   L10n.lightSleep)
                 }
+                .font(.caption2)
+            }
 
-                if let rem = snap?.sleepREMMinutes {
-                    MetricCard(
-                        emoji: "🌙",
-                        title: L10n.remSleep,
-                        value: rem.minutesFormatted,
-                        subtitle: nil,
-                        accentColor: .indigo,
-                        sparklineData: barData(\.sleepREMMinutes),
-                        highlightIndex: currentDayBarIndex
-                    )
-                } else {
-                    MetricCardMissing(emoji: "🌙", title: L10n.remSleep)
-                }
+            // Combined 7-day stacked chart
+            if hasChartData {
+                SleepChartView(snapshots: viewModel.recentSnapshots, selectedDate: viewModel.selectedDate)
+                    .frame(height: 150)
+            }
 
-                if let deep = snap?.sleepDeepMinutes {
-                    MetricCard(
-                        emoji: "💤",
-                        title: L10n.deepSleep,
-                        value: deep.minutesFormatted,
-                        subtitle: nil,
-                        accentColor: .blue,
-                        sparklineData: barData(\.sleepDeepMinutes),
-                        highlightIndex: currentDayBarIndex
-                    )
-                } else {
-                    MetricCardMissing(emoji: "💤", title: L10n.deepSleep)
-                }
+            Divider()
 
-                if let core = snap?.sleepCoreMinutes {
-                    MetricCard(
-                        emoji: "🛌",
-                        title: L10n.lightSleep,
-                        value: core.minutesFormatted,
-                        subtitle: nil,
-                        accentColor: .teal,
-                        sparklineData: barData(\.sleepCoreMinutes),
-                        highlightIndex: currentDayBarIndex
-                    )
-                } else {
-                    MetricCardMissing(emoji: "🛌", title: L10n.lightSleep)
-                }
+            // Individual chips (2-column)
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
+                MetricChip(
+                    emoji: "😴", title: L10n.totalDuration,
+                    value: snap?.sleepDurationHours.map { $0.hoursMinutesString } ?? "—",
+                    accentColor: snap?.sleepDurationHours != nil ? .sleepColor : .secondary
+                )
+                MetricChip(
+                    emoji: "🌙", title: L10n.remSleep,
+                    value: snap?.sleepREMMinutes.map { $0.minutesFormatted } ?? "—",
+                    accentColor: snap?.sleepREMMinutes != nil ? .indigo : .secondary
+                )
+                MetricChip(
+                    emoji: "💤", title: L10n.deepSleep,
+                    value: snap?.sleepDeepMinutes.map { $0.minutesFormatted } ?? "—",
+                    accentColor: snap?.sleepDeepMinutes != nil ? .blue : .secondary
+                )
+                MetricChip(
+                    emoji: "🛌", title: L10n.lightSleep,
+                    value: snap?.sleepCoreMinutes.map { $0.minutesFormatted } ?? "—",
+                    accentColor: snap?.sleepCoreMinutes != nil ? .teal : .secondary
+                )
             }
         }
+        .padding(16)
+        .background(Color(.secondarySystemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 
     // MARK: Cardiaque
 
     private var cardiacSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            sectionHeader(L10n.sectionCardiac, icon: "heart.fill")
-
-            let snap = viewModel.todaySnapshot
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
-                if let bpm = snap?.restingHeartRate {
-                    MetricCard(
-                        emoji: "❤️",
-                        title: L10n.restingHR,
-                        value: "\(Int(bpm)) bpm",
-                        subtitle: nil,
-                        accentColor: .heartColor,
-                        sparklineData: barData(\.restingHeartRate),
-                        highlightIndex: currentDayBarIndex
-                    )
-                } else {
-                    MetricCardMissing(emoji: "❤️", title: L10n.restingHR)
+        let snap = viewModel.todaySnapshot
+        return VStack(alignment: .leading, spacing: 14) {
+            HStack {
+                sectionHeader(L10n.sectionCardiac, icon: "heart.fill")
+                Spacer()
+                HStack(spacing: 10) {
+                    legendDot(.heartColor, "HR")
+                    legendDot(.pink,       "HRV")
                 }
+                .font(.caption2)
+            }
 
-                if let hrv = snap?.hrvSDNN {
-                    MetricCard(
-                        emoji: "💓",
-                        title: "HRV",
-                        value: "\(Int(hrv)) ms",
-                        subtitle: nil,
-                        accentColor: .pink,
-                        sparklineData: barData(\.hrvSDNN),
-                        highlightIndex: currentDayBarIndex
-                    )
-                } else {
-                    MetricCardMissing(emoji: "💓", title: "HRV")
-                }
+            if hasChartData {
+                CardiacChartView(snapshots: viewModel.recentSnapshots, selectedDate: viewModel.selectedDate)
+                    .frame(height: 150)
+            }
+
+            Divider()
+
+            HStack(spacing: 8) {
+                MetricChip(
+                    emoji: "❤️", title: L10n.restingHR,
+                    value: snap?.restingHeartRate.map { "\(Int($0)) bpm" } ?? "—",
+                    accentColor: snap?.restingHeartRate != nil ? .heartColor : .secondary
+                )
+                MetricChip(
+                    emoji: "💓", title: "HRV",
+                    value: snap?.hrvSDNN.map { "\(Int($0)) ms" } ?? "—",
+                    accentColor: snap?.hrvSDNN != nil ? .pink : .secondary
+                )
             }
         }
+        .padding(16)
+        .background(Color(.secondarySystemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 
-    // MARK: Activite
+    // MARK: Activité
 
     private var activitySection: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            sectionHeader(L10n.sectionActivity, icon: "figure.run")
-
-            let snap = viewModel.todaySnapshot
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
-                if let cal = snap?.activeCalories {
-                    MetricCard(
-                        emoji: "🔥",
-                        title: L10n.activeCalories,
-                        value: "\(Int(cal)) kcal",
-                        subtitle: nil,
-                        accentColor: .activityColor,
-                        sparklineData: barData(\.activeCalories),
-                        highlightIndex: currentDayBarIndex
-                    )
-                } else {
-                    MetricCardMissing(emoji: "🔥", title: L10n.activeCalories)
+        let snap = viewModel.todaySnapshot
+        return VStack(alignment: .leading, spacing: 14) {
+            HStack {
+                sectionHeader(L10n.sectionActivity, icon: "figure.run")
+                Spacer()
+                HStack(spacing: 10) {
+                    legendDot(.activityColor, L10n.activeCalories)
+                    legendDot(.green,         L10n.exercise)
                 }
+                .font(.caption2)
+            }
 
-                if let exerciseMins = snap?.exerciseMinutes {
-                    MetricCard(
-                        emoji: "🏃",
-                        title: L10n.exercise,
-                        value: exerciseMins.minutesFormatted,
-                        subtitle: nil,
-                        accentColor: .green,
-                        sparklineData: barData(\.exerciseMinutes),
-                        highlightIndex: currentDayBarIndex
-                    )
-                } else {
-                    MetricCardMissing(emoji: "🏃", title: L10n.exercise)
-                }
+            if hasChartData {
+                ActivityChartView(snapshots: viewModel.recentSnapshots, selectedDate: viewModel.selectedDate)
+                    .frame(height: 130)
+            }
+
+            Divider()
+
+            HStack(spacing: 8) {
+                MetricChip(
+                    emoji: "🔥", title: L10n.activeCalories,
+                    value: snap?.activeCalories.map { "\(Int($0)) kcal" } ?? "—",
+                    accentColor: snap?.activeCalories != nil ? .activityColor : .secondary
+                )
+                MetricChip(
+                    emoji: "🏃", title: L10n.exercise,
+                    value: snap?.exerciseMinutes.map { $0.minutesFormatted } ?? "—",
+                    accentColor: snap?.exerciseMinutes != nil ? .green : .secondary
+                )
             }
         }
+        .padding(16)
+        .background(Color(.secondarySystemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 
     // MARK: Cycle
 
     private var cycleSection: some View {
-        Group {
-            if let flow = viewModel.todaySnapshot?.menstrualFlowRaw {
-                VStack(alignment: .leading, spacing: 10) {
+        let hasCycleData = viewModel.recentSnapshots.contains { ($0.menstrualFlowRaw ?? 0) > 0 }
+        return Group {
+            if hasCycleData {
+                let snap = viewModel.todaySnapshot
+                VStack(alignment: .leading, spacing: 14) {
                     sectionHeader(L10n.sectionCycle, icon: "drop.fill")
-                    MetricCard(
-                        emoji: "🩸",
-                        title: L10n.menstrualFlow,
-                        value: menstrualFlowLabel(flow),
-                        subtitle: nil,
-                        accentColor: .pink,
-                        sparklineData: barData(\.menstrualFlowValue),
-                        highlightIndex: currentDayBarIndex
+
+                    CycleChartView(snapshots: viewModel.recentSnapshots, selectedDate: viewModel.selectedDate)
+                        .frame(height: 110)
+
+                    Divider()
+
+                    MetricChip(
+                        emoji: "🩸", title: L10n.menstrualFlow,
+                        value: snap?.menstrualFlowRaw.map { menstrualFlowLabel($0) } ?? "—",
+                        accentColor: snap?.menstrualFlowRaw != nil ? .pink : .secondary
                     )
                 }
+                .padding(16)
+                .background(Color(.secondarySystemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 16))
             }
         }
     }
@@ -369,73 +365,64 @@ struct HomeView: View {
     // MARK: Météo
 
     private var weatherSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        let snap = viewModel.todaySnapshot
+        return VStack(alignment: .leading, spacing: 14) {
             sectionHeader(L10n.sectionEnvironment, icon: "cloud.sun.fill")
 
-            let snap = viewModel.todaySnapshot
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
-                if let temp = snap?.temperatureCelsius {
-                    MetricCard(
-                        emoji: "🌡️",
-                        title: L10n.temperature,
-                        value: "\(temp.oneDecimal) °C",
-                        subtitle: nil,
-                        accentColor: .weatherColor,
-                        sparklineData: barData(\.temperatureCelsius),
-                        highlightIndex: currentDayBarIndex
-                    )
-                } else {
-                    MetricCardMissing(emoji: "🌡️", title: L10n.temperature)
-                }
+            if hasChartData {
+                WeatherChartView(snapshots: viewModel.recentSnapshots, selectedDate: viewModel.selectedDate)
+                    .frame(height: 130)
+            }
 
-                if let pressure = snap?.pressureHPa {
-                    MetricCard(
-                        emoji: "📊",
-                        title: L10n.pressure,
-                        value: "\(Int(pressure)) hPa",
-                        subtitle: nil,
-                        accentColor: .cyan,
-                        sparklineData: barData(\.pressureHPa),
-                        highlightIndex: currentDayBarIndex
-                    )
-                } else {
-                    MetricCardMissing(emoji: "📊", title: L10n.pressure)
-                }
+            Divider()
 
-                if let humidity = snap?.humidityPercent {
-                    MetricCard(
-                        emoji: "💧",
-                        title: L10n.humidity,
-                        value: "\(Int(humidity)) %",
-                        subtitle: nil,
-                        accentColor: .blue,
-                        sparklineData: barData(\.humidityPercent),
-                        highlightIndex: currentDayBarIndex
-                    )
-                } else {
-                    MetricCardMissing(emoji: "💧", title: L10n.humidity)
-                }
+            HStack(spacing: 8) {
+                MetricChip(
+                    emoji: "🌡️", title: L10n.temperature,
+                    value: snap?.temperatureCelsius.map { "\($0.oneDecimal) °C" } ?? "—",
+                    accentColor: snap?.temperatureCelsius != nil ? .weatherColor : .secondary
+                )
+                MetricChip(
+                    emoji: "📊", title: L10n.pressure,
+                    value: snap?.pressureHPa.map { "\(Int($0)) hPa" } ?? "—",
+                    accentColor: snap?.pressureHPa != nil ? .cyan : .secondary
+                )
+                MetricChip(
+                    emoji: "💧", title: L10n.humidity,
+                    value: snap?.humidityPercent.map { "\(Int($0)) %" } ?? "—",
+                    accentColor: snap?.humidityPercent != nil ? .blue : .secondary
+                )
             }
         }
+        .padding(16)
+        .background(Color(.secondarySystemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 
     // MARK: Humeur
 
     private var moodSection: some View {
-        Group {
-            if let valence = viewModel.todaySnapshot?.moodValence {
-                VStack(alignment: .leading, spacing: 10) {
+        let hasMoodData = viewModel.recentSnapshots.contains { $0.moodValence != nil }
+        return Group {
+            if hasMoodData {
+                let snap = viewModel.todaySnapshot
+                VStack(alignment: .leading, spacing: 14) {
                     sectionHeader(L10n.sectionMood, icon: "brain.head.profile")
-                    MetricCard(
-                        emoji: "🧠",
-                        title: L10n.valence,
-                        value: moodLabel(valence),
-                        subtitle: L10n.scoreLabel(valence),
-                        accentColor: .moodColor,
-                        sparklineData: barData(\.moodValence),
-                        highlightIndex: currentDayBarIndex
+
+                    MoodChartView(snapshots: viewModel.recentSnapshots, selectedDate: viewModel.selectedDate)
+                        .frame(height: 130)
+
+                    Divider()
+
+                    MetricChip(
+                        emoji: "🧠", title: L10n.valence,
+                        value: snap?.moodValence.map { moodLabel($0) } ?? "—",
+                        accentColor: snap?.moodValence != nil ? .moodColor : .secondary
                     )
                 }
+                .padding(16)
+                .background(Color(.secondarySystemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 16))
             }
         }
     }

@@ -103,6 +103,38 @@ struct MiniBarChart: View {
     }
 }
 
+// MARK: - MetricChip (compact, no sparkline — used inside section cards)
+
+struct MetricChip: View {
+    let emoji: String
+    let title: String
+    let value: String
+    var accentColor: Color = .accentColor
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 3) {
+            HStack(spacing: 3) {
+                Text(emoji).font(.caption)
+                Text(title)
+                    .font(.caption2.weight(.medium))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+            }
+            Text(value)
+                .font(.callout.weight(.bold))
+                .foregroundStyle(accentColor)
+                .lineLimit(1)
+                .minimumScaleFactor(0.6)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(10)
+        .background(Color(.tertiarySystemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(title): \(value)")
+    }
+}
+
 // MARK: - Missing data variant
 
 struct MetricCardMissing: View {
