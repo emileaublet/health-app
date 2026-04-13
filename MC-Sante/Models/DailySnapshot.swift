@@ -67,4 +67,9 @@ extension DailySnapshot {
         else { return [] }
         return labels
     }
+
+    /// Double cast of menstrualFlowRaw for sparkline bar charts.
+    var menstrualFlowValue: Double? {
+        menstrualFlowRaw.map { Double($0) }
+    }
 }

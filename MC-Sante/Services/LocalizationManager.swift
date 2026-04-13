@@ -72,6 +72,7 @@ enum L10n {
     static var sectionActivity: String { lang == .french ? "Activité" : "Activity" }
     static var sectionEnvironment: String { lang == .french ? "Environnement" : "Environment" }
     static var sectionMood: String { lang == .french ? "Humeur" : "Mood" }
+    static var sectionCycle: String { lang == .french ? "Cycle" : "Cycle" }
     static var sectionDailyCorrelation: String { lang == .french ? "Corrélation du jour" : "Daily Correlation" }
 
     // Metric titles
@@ -85,6 +86,12 @@ enum L10n {
     static var temperature: String { lang == .french ? "Température" : "Temperature" }
     static var pressure: String { lang == .french ? "Pression" : "Pressure" }
     static var humidity: String { lang == .french ? "Humidité" : "Humidity" }
+    static var menstrualFlow: String { lang == .french ? "Flux menstruel" : "Menstrual Flow" }
+    static var flowNone: String { lang == .french ? "Aucun" : "None" }
+    static var flowUnspecified: String { lang == .french ? "Non précisé" : "Unspecified" }
+    static var flowLight: String { lang == .french ? "Léger" : "Light" }
+    static var flowMedium: String { lang == .french ? "Moyen" : "Medium" }
+    static var flowHeavy: String { lang == .french ? "Abondant" : "Heavy" }
     static var valence: String { lang == .french ? "Valence" : "Valence" }
 
     static func scoreLabel(_ value: Double) -> String {

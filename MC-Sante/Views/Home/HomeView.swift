@@ -134,6 +134,7 @@ struct HomeView: View {
             sleepSection
             cardiacSection
             activitySection
+            cycleSection
             weatherSection
             moodSection
             insightSection
@@ -296,6 +297,38 @@ struct HomeView: View {
                     MetricCardMissing(emoji: "🏃", title: L10n.exercise)
                 }
             }
+        }
+    }
+
+    // MARK: Cycle
+
+    private var cycleSection: some View {
+        Group {
+            if let flow = viewModel.todaySnapshot?.menstrualFlowRaw {
+                VStack(alignment: .leading, spacing: 10) {
+                    sectionHeader(L10n.sectionCycle, icon: "drop.fill")
+                    MetricCard(
+                        emoji: "🩸",
+                        title: L10n.menstrualFlow,
+                        value: menstrualFlowLabel(flow),
+                        subtitle: nil,
+                        accentColor: .pink,
+                        sparklineData: barData(\.menstrualFlowValue),
+                        highlightIndex: currentDayBarIndex
+                    )
+                }
+            }
+        }
+    }
+
+    private func menstrualFlowLabel(_ rawValue: Int) -> String {
+        switch rawValue {
+        case 0: return L10n.flowNone
+        case 1: return L10n.flowUnspecified
+        case 2: return L10n.flowLight
+        case 3: return L10n.flowMedium
+        case 4: return L10n.flowHeavy
+        default: return "—"
         }
     }
 
