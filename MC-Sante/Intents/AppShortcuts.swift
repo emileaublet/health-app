@@ -5,9 +5,8 @@ struct MCHealthShortcuts: AppShortcutsProvider {
         AppShortcut(
             intent: LogCounterIntent(),
             phrases: [
-                "Log \(\.$value) \(\.$categoryName) in \(.applicationName)",
-                "Add \(\.$value) \(\.$categoryName) in \(.applicationName)",
-                "\(\.$value) \(\.$categoryName) in \(.applicationName)",
+                "Log a counter in \(.applicationName)",
+                "Add a metric in \(.applicationName)",
             ],
             shortTitle: "Log Counter",
             systemImageName: "plus.circle"
@@ -15,8 +14,8 @@ struct MCHealthShortcuts: AppShortcutsProvider {
         AppShortcut(
             intent: LogBooleanIntent(),
             phrases: [
-                "Log \(\.$categoryName) in \(.applicationName)",
-                "Did I have \(\.$categoryName) in \(.applicationName)",
+                "Log a yes or no in \(.applicationName)",
+                "Toggle a metric in \(.applicationName)",
             ],
             shortTitle: "Log Yes/No",
             systemImageName: "checkmark.circle"
@@ -24,8 +23,8 @@ struct MCHealthShortcuts: AppShortcutsProvider {
         AppShortcut(
             intent: LogScaleIntent(),
             phrases: [
-                "Rate \(\.$categoryName) \(\.$value) in \(.applicationName)",
-                "Set \(\.$categoryName) to \(\.$value) in \(.applicationName)",
+                "Rate a metric in \(.applicationName)",
+                "Log a scale in \(.applicationName)",
             ],
             shortTitle: "Log Scale",
             systemImageName: "slider.horizontal.3"
