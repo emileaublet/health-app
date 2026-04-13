@@ -37,7 +37,6 @@ struct MC_SanteApp: App {
             TrackingCategory.self,
             DailyEntry.self,
             DailySnapshot.self,
-            CorrelationResult.self,
         ], inMemory: false) { result in
             if case .success(let container) = result {
                 let context = container.mainContext
@@ -51,7 +50,7 @@ struct MC_SanteApp: App {
             let hk   = HealthKitService()
             let ws   = await WeatherDataService()
             let svc  = SnapshotService(healthKit: hk, weather: ws)
-            guard let container = try? ModelContainer(for: DailySnapshot.self, DailyEntry.self, TrackingCategory.self, CorrelationResult.self)
+            guard let container = try? ModelContainer(for: DailySnapshot.self, DailyEntry.self, TrackingCategory.self)
             else { return }
             let ctx = ModelContext(container)
             await svc.buildSnapshot(for: .now, context: ctx)

@@ -36,9 +36,29 @@ extension Date {
         return f.string(from: self).capitalized
     }
 
+    /// Single-letter weekday initial (e.g. "D", "L", "M" in French).
+    var weekdayInitial: String {
+        let f = DateFormatter()
+        f.dateFormat = "EEEEE"
+        f.locale = LocalizationManager.shared.locale
+        return f.string(from: self).uppercased()
+    }
+
     var dayNumberString: String {
         let f = DateFormatter()
         f.dateFormat = "d"
+        return f.string(from: self)
+    }
+
+    /// "Aujourd'hui" / "Today" if today, otherwise "13 avril" (FR) or "April 13" (EN).
+    var dayMonthString: String {
+        if Calendar.current.isDateInToday(self) {
+            return LocalizationManager.shared.language == .french ? "Aujourd'hui" : "Today"
+        }
+        let f = DateFormatter()
+        let locale = LocalizationManager.shared.locale
+        f.locale = locale
+        f.dateFormat = DateFormatter.dateFormat(fromTemplate: "d MMMM", options: 0, locale: locale)
         return f.string(from: self)
     }
 

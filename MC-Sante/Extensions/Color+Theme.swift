@@ -16,20 +16,6 @@ extension Color {
     static let moodColor     = Color.purple
     static let manualColor   = Color.teal
 
-    // MARK: Correlation strength colours
-    static let correlationWeak     = Color.yellow
-    static let correlationModerate = Color.orange
-    static let correlationStrong   = Color.red
-
-    // MARK: Helpers
-    static func correlationColor(for r: Double) -> Color {
-        switch abs(r) {
-        case 0.7...: return .correlationStrong
-        case 0.5...: return .correlationModerate
-        default:     return .correlationWeak
-        }
-    }
-
     static func metricColor(for metricName: String) -> Color {
         let name = metricName.lowercased()
         if name.contains("sommeil") || name.contains("sleep") || name.contains("rem") || name.contains("profond") || name.contains("deep") {

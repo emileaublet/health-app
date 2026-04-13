@@ -4,8 +4,9 @@ import SwiftData
 struct HomeView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var viewModel: HomeViewModel
-    @State private var showingCelebration = false
-    @Binding var selectedTab: ContentView.Tab
+    @State private var logViewModel = LogViewModel()
+    @State private var showingAddCategory = false
+    @State private var safeAreaTop: CGFloat = 0
 
     // Per-section visibility (persisted in UserDefaults)
     @AppStorage("section_sleep")    private var showSleep    = true
@@ -15,125 +16,172 @@ struct HomeView: View {
     @AppStorage("section_weather")  private var showWeather  = true
     @AppStorage("section_mood")     private var showMood     = true
 
-    init(snapshotService: SnapshotService, selectedTab: Binding<ContentView.Tab>) {
+    var onSettingsTap: () -> Void = {}
+
+    init(snapshotService: SnapshotService, onSettingsTap: @escaping () -> Void = {}) {
         _viewModel = State(wrappedValue: HomeViewModel(snapshotService: snapshotService))
-        _selectedTab = selectedTab
+        self.onSettingsTap = onSettingsTap
     }
 
     var body: some View {
-        NavigationStack {
+        ScrollView {
             VStack(spacing: 0) {
+                // Pushes content below status bar (height read from overlay)
+                Color.clear.frame(height: safeAreaTop)
+
+                // Header: title left, buttons right
+                HStack(alignment: .center) {
+                    Text(viewModel.selectedDate.dayMonthString)
+                        .font(.largeTitle.weight(.bold))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                    HStack(spacing: 8) {
+                        if !viewModel.isToday {
+                            Button {
+                                withAnimation(.easeInOut(duration: 0.2)) {
+                                    viewModel.selectedDate = Calendar.current.startOfDay(for: .now)
+                                }
+                            } label: {
+                                Text(LocalizationManager.shared.language == .french ? "Aujourd'hui" : "Today")
+                                    .font(.callout.weight(.medium))
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 5)
+                                    .background(Color.accentColor.opacity(0.12))
+                                    .foregroundStyle(Color.accentColor)
+                                    .clipShape(Capsule())
+                            }
+                            .transition(.opacity.combined(with: .scale))
+                            .sensoryFeedback(.selection, trigger: viewModel.isToday)
+                        }
+                        Button {
+                            onSettingsTap()
+                        } label: {
+                            Image(systemName: "gearshape")
+                                .font(.title3)
+                        }
+                    }
+                }
+                .padding(.horizontal)
+                .padding(.top, 16)
+                .padding(.bottom, 8)
+                .animation(.easeInOut(duration: 0.2), value: viewModel.isToday)
+
+                // Calendar strip (scrolls with content)
                 dateNavigator
-                    .padding(.horizontal)
-                    .padding(.vertical, 10)
-                    .background(Color(.systemBackground))
+                    .padding(.bottom, 12)
 
                 Divider()
 
-                ScrollView {
-                    if viewModel.isLoading && viewModel.todaySnapshot == nil {
-                        skeletonContent
-                    } else {
-                        dataContent
-                    }
-                }
-                .refreshable {
-                    await viewModel.forceRefresh(context: modelContext)
+                if viewModel.isLoading && viewModel.todaySnapshot == nil {
+                    skeletonContent
+                } else {
+                    dataContent
                 }
             }
-            .navigationTitle(L10n.tabHome)
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    HStack(spacing: 12) {
-                        Button {
-                            selectedTab = .log
-                        } label: {
-                            Image(systemName: "pencil.circle.fill")
-                        }
-                        Button {
-                            Task { await viewModel.forceRefresh(context: modelContext) }
-                        } label: {
-                            Image(systemName: "arrow.clockwise")
-                        }
-                    }
-                }
+        }
+        .refreshable {
+            await viewModel.forceRefresh(context: modelContext)
+        }
+        .toolbar(.hidden, for: .navigationBar)
+        .ignoresSafeArea(edges: .top)
+        .overlay(alignment: .top) {
+            GeometryReader { geo in
+                let inset = geo.safeAreaInsets.top
+                LinearGradient(
+                    stops: [
+                        .init(color: Color(.systemBackground), location: 0),
+                        .init(color: Color(.systemBackground).opacity(0.85), location: 0.5),
+                        .init(color: Color(.systemBackground).opacity(0), location: 1),
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: inset + 24)
+                .ignoresSafeArea(edges: .top)
+                .onAppear { safeAreaTop = inset }
             }
+            .frame(height: 0)
+        }
+        .sheet(isPresented: $showingAddCategory) {
+            CategoryEditorSheet(viewModel: logViewModel)
         }
         .task {
+            logViewModel.configure(context: modelContext)
             await viewModel.loadDay(context: modelContext)
         }
-        .onChange(of: viewModel.selectedDate) { _, _ in
+        .onChange(of: viewModel.selectedDate) { _, newDate in
+            logViewModel.selectedDate = newDate
+            logViewModel.loadEntriesForCurrentDate()
             Task { await viewModel.loadDay(context: modelContext) }
         }
     }
 
-    // MARK: Date navigator
+    // MARK: Date navigator (infinite scroll strip)
+
+    /// Number of past days available in the strip.
+    private static let stripDayCount = 365
+
+    /// All dates in the strip, from oldest (index 0) to today (last).
+    private var stripDays: [Date] {
+        let today = Calendar.current.startOfDay(for: .now)
+        return (0..<Self.stripDayCount).reversed().compactMap {
+            Calendar.current.date(byAdding: .day, value: -$0, to: today)
+        }
+    }
 
     private var dateNavigator: some View {
-        HStack {
-            Button {
-                viewModel.goToPreviousDay()
-            } label: {
-                Image(systemName: "chevron.left")
-                    .font(.title3.weight(.semibold))
-                    .frame(width: 44, height: 44)
+        ScrollViewReader { proxy in
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 4) {
+                    ForEach(stripDays, id: \.self) { day in
+                        let isSelected = Calendar.current.isDate(day, inSameDayAs: viewModel.selectedDate)
+                        let isTodayDate = Calendar.current.isDateInToday(day)
+
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                viewModel.selectedDate = Calendar.current.startOfDay(for: day)
+                            }
+                        } label: {
+                            VStack(spacing: 6) {
+                                Text(day.weekdayInitial)
+                                    .font(.caption)
+                                    .fontWeight(.medium)
+                                    .foregroundStyle(isSelected ? .primary : .secondary)
+
+                                Text(day.dayNumberString)
+                                    .font(.callout)
+                                    .fontWeight(isSelected ? .bold : .regular)
+                                    .foregroundStyle(
+                                        isSelected ? .white
+                                        : isTodayDate ? Color.red
+                                        : .primary
+                                    )
+                                    .frame(width: 32, height: 32)
+                                    .background(
+                                        Circle()
+                                            .fill(isSelected ? Color(.label) : .clear)
+                                    )
+                            }
+                            .frame(width: 48)
+                        }
+                        .buttonStyle(.plain)
+                        .sensoryFeedback(.selection, trigger: isSelected)
+                        .id(day)
+                    }
+                }
+                .padding(.horizontal)
             }
-
-            Spacer()
-
-            Button {
-                viewModel.selectedDate = Calendar.current.startOfDay(for: .now)
-            } label: {
-                VStack(spacing: 2) {
-                    Text(viewModel.dateTitle)
-                        .font(.headline)
-                    Text(viewModel.selectedDate.shortDateString)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Text(LocalizationManager.shared.language == .french ? "↩ Aujourd'hui" : "↩ Today")
-                        .font(.caption2)
-                        .foregroundStyle(Color.accentColor)
-                        .opacity(viewModel.isToday ? 0 : 1)
+            .onAppear {
+                proxy.scrollTo(viewModel.selectedDate, anchor: .trailing)
+            }
+            .onChange(of: viewModel.selectedDate) { _, newDate in
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    proxy.scrollTo(newDate, anchor: .center)
                 }
             }
-            .buttonStyle(.plain)
-            .disabled(viewModel.isToday)
-
-            Spacer()
-
-            Button {
-                viewModel.goToNextDay()
-            } label: {
-                Image(systemName: "chevron.right")
-                    .font(.title3.weight(.semibold))
-                    .frame(width: 44, height: 44)
-            }
-            .opacity(viewModel.canGoForward ? 1 : 0.3)
-            .disabled(!viewModel.canGoForward)
         }
     }
 
-    // MARK: Streak banner
-
-    private var streakBanner: some View {
-        HStack {
-            Text(L10n.streakDays(viewModel.currentStreak))
-                .font(.callout.weight(.semibold))
-                .foregroundStyle(.white)
-            Spacer()
-            Image(systemName: "flame.fill")
-                .font(.title3)
-                .foregroundStyle(.white.opacity(0.9))
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 10)
-        .background(
-            LinearGradient(colors: [.orange, .pink], startPoint: .leading, endPoint: .trailing)
-        )
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .shadow(color: .orange.opacity(0.3), radius: 6, y: 3)
-    }
 
     // MARK: Skeleton
 
@@ -151,11 +199,6 @@ struct HomeView: View {
 
     private var dataContent: some View {
         LazyVStack(spacing: 20, pinnedViews: []) {
-            // Streak banner
-            if viewModel.currentStreak > 0 {
-                streakBanner
-            }
-
             // Empty state: no snapshot and not loading
             if viewModel.todaySnapshot == nil && !viewModel.isLoading {
                 VStack(spacing: 12) {
@@ -173,13 +216,13 @@ struct HomeView: View {
                 .padding(.vertical, 40)
             }
 
+            logSection
             if showSleep    { sleepSection }
             if showCardiac  { cardiacSection }
             if showActivity { activitySection }
             if showCycle    { cycleSection }
             if showWeather  { weatherSection }
             if showMood     { moodSection }
-            insightSection
             disclaimerFooter
         }
         .padding()
@@ -195,7 +238,26 @@ struct HomeView: View {
         }
     }
 
-    private var hasChartData: Bool { viewModel.recentSnapshots.count >= 2 }
+    private var snapshots: [DailySnapshot] { viewModel.recentSnapshots }
+
+    private var hasSleepChartData: Bool {
+        snapshots.filter { $0.sleepDurationHours != nil }.count >= 2
+    }
+    private var hasCardiacChartData: Bool {
+        snapshots.filter { $0.restingHeartRate != nil || $0.hrvSDNN != nil }.count >= 2
+    }
+    private var hasActivityChartData: Bool {
+        snapshots.filter { $0.activeCalories != nil || $0.exerciseMinutes != nil }.count >= 2
+    }
+    private var hasCycleChartData: Bool {
+        snapshots.filter { $0.menstrualFlowRaw != nil }.count >= 2
+    }
+    private var hasWeatherChartData: Bool {
+        snapshots.filter { $0.temperatureCelsius != nil }.count >= 2
+    }
+    private var hasMoodChartData: Bool {
+        snapshots.filter { $0.moodValence != nil }.count >= 2
+    }
 
     // MARK: Sommeil
 
@@ -215,7 +277,7 @@ struct HomeView: View {
             }
 
             // Combined 7-day stacked chart
-            if hasChartData {
+            if hasSleepChartData {
                 SleepChartView(snapshots: viewModel.recentSnapshots, selectedDate: viewModel.selectedDate)
                     .frame(height: 150)
             }
@@ -266,7 +328,7 @@ struct HomeView: View {
                 .font(.caption2)
             }
 
-            if hasChartData {
+            if hasCardiacChartData {
                 CardiacChartView(snapshots: viewModel.recentSnapshots, selectedDate: viewModel.selectedDate)
                     .frame(height: 150)
             }
@@ -306,7 +368,7 @@ struct HomeView: View {
                 .font(.caption2)
             }
 
-            if hasChartData {
+            if hasActivityChartData {
                 ActivityChartView(snapshots: viewModel.recentSnapshots, selectedDate: viewModel.selectedDate)
                     .frame(height: 130)
             }
@@ -338,7 +400,7 @@ struct HomeView: View {
         return VStack(alignment: .leading, spacing: 14) {
             sectionHeader(L10n.sectionCycle, icon: "drop.fill")
 
-            if hasChartData {
+            if hasCycleChartData {
                 CycleChartView(snapshots: viewModel.recentSnapshots, selectedDate: viewModel.selectedDate)
                     .frame(height: 110)
             }
@@ -374,7 +436,7 @@ struct HomeView: View {
         return VStack(alignment: .leading, spacing: 14) {
             sectionHeader(L10n.sectionEnvironment, icon: "cloud.sun.fill")
 
-            if hasChartData {
+            if hasWeatherChartData {
                 WeatherChartView(snapshots: viewModel.recentSnapshots, selectedDate: viewModel.selectedDate)
                     .frame(height: 130)
             }
@@ -411,7 +473,7 @@ struct HomeView: View {
         return VStack(alignment: .leading, spacing: 14) {
             sectionHeader(L10n.sectionMood, icon: "brain.head.profile")
 
-            if hasChartData {
+            if hasMoodChartData {
                 MoodChartView(snapshots: viewModel.recentSnapshots, selectedDate: viewModel.selectedDate)
                     .frame(height: 130)
             }
@@ -429,55 +491,52 @@ struct HomeView: View {
         .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 
-    // MARK: Insight
+    // MARK: Log section
 
-    private var insightSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            sectionHeader(L10n.sectionDailyCorrelation, icon: "sparkles")
+    private var logSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            sectionHeader(L10n.logTitle, icon: "pencil.circle.fill")
 
-            if let insight = viewModel.topInsight {
-                InsightCard(insight: insight)
-            } else if viewModel.daysUntilFirstInsight > 0 {
-                noInsightPlaceholder
-            }
-        }
-    }
-
-    private var noInsightPlaceholder: some View {
-        HStack(spacing: 0) {
-            // Left accent bar
-            Rectangle()
-                .fill(Color.accentColor)
-                .frame(width: 4)
-                .clipShape(
-                    UnevenRoundedRectangle(
-                        topLeadingRadius: 14, bottomLeadingRadius: 14,
-                        bottomTrailingRadius: 0, topTrailingRadius: 0
-                    )
-                )
-
-            HStack {
-                Image(systemName: "chart.line.uptrend.xyaxis")
-                    .font(.title2)
+            if logViewModel.categories.isEmpty {
+                Text(LocalizationManager.shared.language == .french
+                     ? "Aucune catégorie active."
+                     : "No active categories.")
+                    .font(.callout)
                     .foregroundStyle(.secondary)
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(L10n.keepLogging)
-                        .font(.callout.weight(.medium))
-                    Text(L10n.daysUntilCorrelations(viewModel.daysUntilFirstInsight))
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    ProgressView(
-                        value: Double(7 - viewModel.daysUntilFirstInsight),
-                        total: 7
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding(.vertical, 8)
+            } else {
+                ForEach(logViewModel.categories) { category in
+                    CategoryRow(
+                        category: category,
+                        value: Binding(
+                            get: { logViewModel.currentValue(for: category) },
+                            set: { logViewModel.setValue($0, for: category) }
+                        )
                     )
-                    .tint(.accentColor)
                 }
-                Spacer()
             }
-            .padding()
+
+            Button {
+                showingAddCategory = true
+            } label: {
+                Label(L10n.addCategory, systemImage: "plus.circle")
+                    .font(.callout)
+                    .foregroundStyle(Color.accentColor)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(Color(.secondarySystemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+            }
+
+            DayNoteField(text: Binding(
+                get: { logViewModel.entriesForDate.values.first(where: { $0.note != nil })?.note ?? "" },
+                set: { logViewModel.setDayNote($0) }
+            ))
         }
+        .padding(16)
         .background(Color(.secondarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 
     // MARK: Disclaimer

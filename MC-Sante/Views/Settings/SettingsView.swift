@@ -13,9 +13,15 @@ struct SettingsView: View {
     )
     private var archivedCategories: [TrackingCategory]
 
+    @Query private var allSnapshots: [DailySnapshot]
+    @Query private var allEntries: [DailyEntry]
+
+    private var hasData: Bool { !allSnapshots.isEmpty || !allEntries.isEmpty }
+
     @State private var showingExportSheet = false
     @State private var exportURL: URL?
     @State private var showingDeleteConfirmation = false
+    @State private var showingExportEmptyAlert = false
 
     @AppStorage("section_sleep")    private var showSleep    = true
     @AppStorage("section_cardiac")  private var showCardiac  = true
@@ -124,18 +130,24 @@ struct SettingsView: View {
                 Section(L10n.sectionData) {
                     Button {
                         exportURL = viewModel.exportCSV(context: modelContext)
-                        if exportURL != nil { showingExportSheet = true }
+                        if exportURL != nil {
+                            showingExportSheet = true
+                        } else {
+                            showingExportEmptyAlert = true
+                        }
                     } label: {
                         Label(L10n.exportCSV, systemImage: "square.and.arrow.up")
                     }
-                    .foregroundStyle(Color.accentColor)
+                    .foregroundStyle(hasData ? Color.accentColor : Color.secondary)
+                    .disabled(!hasData)
 
                     Button(role: .destructive) {
                         showingDeleteConfirmation = true
                     } label: {
                         Label(L10n.removeAllData, systemImage: "trash")
-                            .foregroundStyle(.red)
+                            .foregroundStyle(hasData ? .red : Color.secondary)
                     }
+                    .disabled(!hasData)
                 }
 
                 // MARK: À propos
@@ -161,6 +173,11 @@ struct SettingsView: View {
                 Button(L10n.cancel, role: .cancel) {}
             } message: {
                 Text(L10n.removeAllDataConfirmMessage)
+            }
+            .alert(L10n.exportEmptyTitle, isPresented: $showingExportEmptyAlert) {
+                Button(L10n.ok, role: .cancel) {}
+            } message: {
+                Text(L10n.exportEmptyMessage)
             }
         }
         .onAppear {
@@ -213,7 +230,6 @@ struct SettingsView: View {
         do {
             try modelContext.delete(model: DailySnapshot.self)
             try modelContext.delete(model: DailyEntry.self)
-            try modelContext.delete(model: CorrelationResult.self)
             try modelContext.delete(model: TrackingCategory.self)
             try modelContext.save()
             // Re-seed built-in categories

@@ -74,8 +74,6 @@ enum L10n {
     static var sectionMood: String { lang == .french ? "Humeur" : "Mood" }
     static var sectionCycle: String { lang == .french ? "Cycle" : "Cycle" }
     static var sectionDisplayed: String { lang == .french ? "Sections affichées" : "Displayed Sections" }
-    static var sectionDailyCorrelation: String { lang == .french ? "Corrélation du jour" : "Daily Correlation" }
-
     // Metric titles
     static var totalDuration: String { lang == .french ? "Durée totale" : "Total Duration" }
     static var remSleep: String { lang == .french ? "Sommeil REM" : "REM Sleep" }
@@ -106,16 +104,6 @@ enum L10n {
     static var moodNegative: String { lang == .french ? "Négatif" : "Negative" }
     static var moodVeryNegative: String { lang == .french ? "Très négatif" : "Very Negative" }
 
-    // Insight placeholders
-    static var keepLogging: String { lang == .french ? "Continue à logger tes données" : "Keep logging your data" }
-    static func daysUntilCorrelations(_ count: Int) -> String {
-        if lang == .french {
-            return "Encore \(count) jour\(count > 1 ? "s" : "") pour les premières corrélations."
-        } else {
-            return "\(count) more day\(count > 1 ? "s" : "") until first correlations."
-        }
-    }
-
     static var disclaimerHome: String {
         lang == .french
             ? "⚠️ Ces données sont indicatives. Elles ne remplacent pas un avis médical professionnel."
@@ -132,79 +120,7 @@ enum L10n {
 
     // MARK: Trends
     static var trendsTitle: String { lang == .french ? "Tendances" : "Trends" }
-    static var computingCorrelations: String { lang == .french ? "Calcul des corrélations…" : "Computing correlations…" }
-    static var noSignificantCorrelation: String {
-        lang == .french
-            ? "Aucune corrélation significative détectée sur cette fenêtre. Continue à logger !"
-            : "No significant correlation detected in this window. Keep logging!"
-    }
-    static func correlationsCount(_ count: Int) -> String {
-        lang == .french ? "Corrélations (\(count))" : "Correlations (\(count))"
-    }
-    static func disclaimerTrends(_ days: Int) -> String {
-        if lang == .french {
-            return "⚠️ Ces corrélations sont statistiques et ne prouvent pas de causalité. Elles sont basées sur les données des \(days) derniers jours. Consultez un professionnel de santé pour toute décision médicale."
-        } else {
-            return "⚠️ These correlations are statistical and do not prove causation. They are based on the last \(days) days of data. Consult a healthcare professional for any medical decisions."
-        }
-    }
-    static var learningInProgress: String { lang == .french ? "En cours d'apprentissage…" : "Learning in progress…" }
-    static var insufficientDataMessage: String {
-        lang == .french
-            ? "Il faut au moins 7 jours de données pour calculer les premières corrélations."
-            : "At least 7 days of data are needed to compute the first correlations."
-    }
-    static func daysUntilReady(_ count: Int) -> String {
-        if lang == .french {
-            return "Encore \(count) jour\(count > 1 ? "s" : "") !"
-        } else {
-            return "\(count) more day\(count > 1 ? "s" : "")!"
-        }
-    }
-
-    // Trend detail
-    static var visualization: String { lang == .french ? "Visualisation" : "Visualization" }
-    static var details: String { lang == .french ? "Détails" : "Details" }
     static var close: String { lang == .french ? "Fermer" : "Close" }
-    static var coefficientR: String { lang == .french ? "Coefficient r" : "Coefficient r" }
-    static var strengthLabel: String { lang == .french ? "Force" : "Strength" }
-    static var sample: String { lang == .french ? "Échantillon" : "Sample" }
-    static func sampleDays(_ count: Int) -> String {
-        lang == .french ? "\(count) jours" : "\(count) days"
-    }
-    static var lag: String { lang == .french ? "Décalage" : "Lag" }
-    static var sameDay: String { lang == .french ? "Même jour" : "Same day" }
-    static func lagDays(_ count: Int) -> String {
-        lang == .french ? "\(count) j" : "\(count) d"
-    }
-    static var window: String { lang == .french ? "Fenêtre" : "Window" }
-    static func windowDays(_ count: Int) -> String {
-        lang == .french ? "\(count) jours" : "\(count) days"
-    }
-    static var computedOn: String { lang == .french ? "Calculé le" : "Computed on" }
-
-    // Chart
-    static var timeline: String { lang == .french ? "Chronologie" : "Timeline" }
-    static var scatter: String { lang == .french ? "Nuage" : "Scatter" }
-    static func chartDisclaimer(_ sampleSize: Int) -> String {
-        lang == .french
-            ? "⚠️ Corrélation statistique ≠ causalité. n = \(sampleSize) jours."
-            : "⚠️ Statistical correlation ≠ causation. n = \(sampleSize) days."
-    }
-    static func lagOverlay(_ days: Int) -> String {
-        lang == .french ? "↺ Décalage \(days) j" : "↺ Lag \(days) d"
-    }
-
-    // Insight card
-    static var correlationDetected: String { lang == .french ? "Corrélation détectée" : "Correlation detected" }
-    static func insightLag(_ days: Int) -> String {
-        lang == .french ? "Décalage \(days) j" : "Lag \(days) d"
-    }
-
-    // Correlation strengths
-    static var strengthWeak: String { lang == .french ? "Faible" : "Weak" }
-    static var strengthModerate: String { lang == .french ? "Modérée" : "Moderate" }
-    static var strengthStrong: String { lang == .french ? "Forte" : "Strong" }
 
     // MARK: Settings
     static var settingsTitle: String { lang == .french ? "Réglages" : "Settings" }
@@ -221,6 +137,13 @@ enum L10n {
     static var sectionLanguage: String { lang == .french ? "Langue" : "Language" }
     static var sectionData: String { lang == .french ? "Données" : "Data" }
     static var exportCSV: String { lang == .french ? "Exporter en CSV" : "Export as CSV" }
+    static var exportEmptyTitle: String { lang == .french ? "Aucune donnée" : "No Data" }
+    static var exportEmptyMessage: String {
+        lang == .french
+            ? "Aucune donnée à exporter. Commence à logger pour générer un export."
+            : "No data to export yet. Start logging to generate an export."
+    }
+    static var ok: String { "OK" }
     static var removeAllData: String { lang == .french ? "Supprimer toutes les données" : "Remove all data" }
     static var removeAllDataConfirmTitle: String { lang == .french ? "Supprimer toutes les données ?" : "Remove all data?" }
     static var removeAllDataConfirmMessage: String { lang == .french ? "Cette action est irréversible. Toutes vos données de santé, entrées et catégories personnalisées seront supprimées." : "This action cannot be undone. All your health data, entries, and custom categories will be deleted." }
@@ -321,6 +244,14 @@ enum L10n {
         lang == .french
             ? "Comment s'est passée ta journée ? 30 secondes pour logger."
             : "How was your day? 30 seconds to log."
+    }
+    static var notificationDescription: String {
+        lang == .french
+            ? "Reçois un rappel quotidien pour ne pas oublier de logger ta journée."
+            : "Get a daily reminder so you never forget to log your day."
+    }
+    static var authorizeNotificationsButton: String {
+        lang == .french ? "Activer les notifications" : "Enable Notifications"
     }
 
     // MARK: Formatting helpers

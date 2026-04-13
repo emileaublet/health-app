@@ -13,6 +13,7 @@ struct OnboardingView: View {
             welcomePage.tag(0)
             healthKitPage.tag(1)
             locationPage.tag(2)
+            notificationPage.tag(3)
         }
         .tabViewStyle(.page(indexDisplayMode: .always))
         .indexViewStyle(.page(backgroundDisplayMode: .always))
@@ -58,10 +59,26 @@ struct OnboardingView: View {
             title: L10n.weatherTitle,
             description: L10n.weatherDescription,
             secondaryLabel: L10n.skip,
-            secondaryAction: { complete() },
+            secondaryAction: { currentPage = 3 },
             primaryLabel: L10n.authorizeLocationButton,
             primaryAction: {
                 weather.requestLocationPermission()
+                currentPage = 3
+            }
+        )
+    }
+
+    // MARK: Page 4 — Notifications
+
+    private var notificationPage: some View {
+        OnboardingPage(
+            emoji: "🔔",
+            title: L10n.notificationTitle,
+            description: L10n.notificationDescription,
+            secondaryLabel: L10n.skip,
+            secondaryAction: { complete() },
+            primaryLabel: L10n.authorizeNotificationsButton,
+            primaryAction: {
                 Task {
                     await notifications.requestAuthorization()
                     await notifications.scheduleDailyReminder(hour: 21, minute: 0)

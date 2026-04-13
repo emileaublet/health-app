@@ -20,6 +20,7 @@ struct CalendarStrip: View {
                         )
                         .id(date)
                         .onTapGesture { selectedDate = date }
+                        .sensoryFeedback(.selection, trigger: selectedDate)
                     }
                 }
                 .padding(.horizontal)
@@ -52,11 +53,11 @@ private struct DayCell: View {
         VStack(spacing: 4) {
             Text(date.dayOfWeekString)
                 .font(.caption2.weight(.medium))
-                .foregroundStyle(isSelected ? .white : .secondary)
+                .foregroundStyle(isSelected ? .primary : .secondary)
 
             Text(date.dayNumberString)
                 .font(.callout.weight(isSelected ? .bold : .regular))
-                .foregroundStyle(isSelected ? .white : .primary)
+                .foregroundStyle(isSelected ? .primary : .primary)
                 .frame(width: 32, height: 32)
                 .background(isSelected ? Color.accentColor : .clear)
                 .clipShape(Circle())

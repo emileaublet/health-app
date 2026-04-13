@@ -11,7 +11,6 @@ struct LogView: View {
             VStack(spacing: 0) {
                 // Navigation de date
                 dateNavigator
-                    .padding(.horizontal)
                     .padding(.vertical, 10)
                     .background(Color(.systemBackground))
 
@@ -57,8 +56,8 @@ struct LogView: View {
                     .padding()
                 }
             }
-            .navigationTitle(L10n.logTitle)
-            .navigationBarTitleDisplayMode(.large)
+            .navigationTitle(viewModel.selectedDate.dayMonthString)
+            .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $showingAddCategory) {
                 CategoryEditorSheet(viewModel: viewModel)
             }
@@ -68,46 +67,68 @@ struct LogView: View {
         }
     }
 
-    // MARK: Date navigator
+    // MARK: Date navigator (infinite scroll strip)
 
-    private var dateNavigator: some View {
-        HStack {
-            Button {
-                viewModel.goToPreviousDay()
-            } label: {
-                Image(systemName: "chevron.left")
-                    .font(.title3.weight(.semibold))
-                    .frame(width: 44, height: 44)
-            }
+    private static let stripDayCount = 365
 
-            Spacer()
-
-            VStack(spacing: 2) {
-                Text(dateTitle)
-                    .font(.headline)
-                Text(viewModel.selectedDate.shortDateString)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-
-            Spacer()
-
-            Button {
-                viewModel.goToNextDay()
-            } label: {
-                Image(systemName: "chevron.right")
-                    .font(.title3.weight(.semibold))
-                    .frame(width: 44, height: 44)
-            }
-            .opacity(viewModel.canGoForward ? 1 : 0.3)
-            .disabled(!viewModel.canGoForward)
+    private var stripDays: [Date] {
+        let today = Calendar.current.startOfDay(for: .now)
+        return (0..<Self.stripDayCount).reversed().compactMap {
+            Calendar.current.date(byAdding: .day, value: -$0, to: today)
         }
     }
 
-    private var dateTitle: String {
-        if viewModel.isToday { return L10n.today }
-        if Calendar.current.isDateInYesterday(viewModel.selectedDate) { return L10n.yesterday }
-        return viewModel.selectedDate.dayOfWeekString
+    private var dateNavigator: some View {
+        ScrollViewReader { proxy in
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 4) {
+                    ForEach(stripDays, id: \.self) { day in
+                        let isSelected = Calendar.current.isDate(day, inSameDayAs: viewModel.selectedDate)
+                        let isTodayDate = Calendar.current.isDateInToday(day)
+
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                viewModel.selectedDate = Calendar.current.startOfDay(for: day)
+                            }
+                        } label: {
+                            VStack(spacing: 6) {
+                                Text(day.weekdayInitial)
+                                    .font(.caption)
+                                    .fontWeight(.medium)
+                                    .foregroundStyle(isSelected ? .primary : .secondary)
+
+                                Text(day.dayNumberString)
+                                    .font(.title2)
+                                    .fontWeight(isSelected ? .bold : .regular)
+                                    .foregroundStyle(
+                                        isSelected ? .white
+                                        : isTodayDate ? Color.red
+                                        : .primary
+                                    )
+                                    .frame(width: 40, height: 40)
+                                    .background(
+                                        Circle()
+                                            .fill(isSelected ? Color(.label) : .clear)
+                                    )
+                            }
+                            .frame(width: 48)
+                        }
+                        .buttonStyle(.plain)
+                        .sensoryFeedback(.selection, trigger: isSelected)
+                        .id(day)
+                    }
+                }
+                .padding(.horizontal)
+            }
+            .onAppear {
+                proxy.scrollTo(viewModel.selectedDate, anchor: .trailing)
+            }
+            .onChange(of: viewModel.selectedDate) { _, newDate in
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    proxy.scrollTo(newDate, anchor: .center)
+                }
+            }
+        }
     }
 
     // MARK: Note section
@@ -122,7 +143,7 @@ struct LogView: View {
 
 // MARK: - CategoryRow
 
-private struct CategoryRow: View {
+struct CategoryRow: View {
     let category: TrackingCategory
     @Binding var value: Double
 
