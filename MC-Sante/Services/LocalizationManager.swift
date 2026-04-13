@@ -375,4 +375,48 @@ enum L10n {
             : "Data could not be saved. Please try again."
     }
     static var ok: String { lang == .french ? "OK" : "OK" }
+
+    // MARK: iCloud Backup
+    static var sectionBackup: String { lang == .french ? "Sauvegarde iCloud" : "iCloud Backup" }
+    static var backupNow: String { lang == .french ? "Sauvegarder maintenant" : "Back Up Now" }
+    static var restoreFromBackup: String { lang == .french ? "Restaurer depuis la sauvegarde" : "Restore from Backup" }
+    static var lastBackup: String { lang == .french ? "Dernière sauvegarde" : "Last backup" }
+    static var never: String { lang == .french ? "Jamais" : "Never" }
+    static var backupSuccess: String { lang == .french ? "Sauvegarde réussie" : "Backup Successful" }
+    static var backupSuccessMessage: String {
+        lang == .french
+            ? "Toutes vos données ont été sauvegardées dans iCloud."
+            : "All your data has been backed up to iCloud."
+    }
+    static var backupLocalSuccess: String {
+        lang == .french
+            ? "Sauvegarde locale réussie (iCloud non disponible)."
+            : "Local backup successful (iCloud unavailable)."
+    }
+    static var backupError: String { lang == .french ? "Erreur de sauvegarde" : "Backup Error" }
+    static var restoreConfirmTitle: String { lang == .french ? "Restaurer les données ?" : "Restore Data?" }
+    static var restoreConfirmMessage: String {
+        lang == .french
+            ? "Toutes les données actuelles seront remplacées par la sauvegarde. Cette action est irréversible."
+            : "All current data will be replaced with the backup. This action cannot be undone."
+    }
+    static var restore: String { lang == .french ? "Restaurer" : "Restore" }
+    static var restoreSuccess: String { lang == .french ? "Restauration réussie" : "Restore Successful" }
+    static func restoredItemsCount(_ count: Int) -> String {
+        lang == .french ? "\(count) éléments restaurés." : "\(count) items restored."
+    }
+    static var restoreError: String { lang == .french ? "Erreur de restauration" : "Restore Error" }
+    static var icloudUnavailable: String {
+        lang == .french
+            ? "iCloud n'est pas disponible. La sauvegarde sera locale uniquement."
+            : "iCloud is not available. Backup will be local only."
+    }
+
+    // MARK: App Intents
+    static var logShortcutTitle: String { lang == .french ? "Logger une donnée" : "Log a metric" }
+    static var logShortcutDescription: String {
+        lang == .french
+            ? "Enregistre rapidement une valeur pour une catégorie de suivi."
+            : "Quickly log a value for a tracking category."
+    }
 }

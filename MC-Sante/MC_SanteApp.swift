@@ -48,20 +48,43 @@ struct MC_SanteApp: App {
             // Daily background snapshot — runs once per day via BackgroundTasks
             // Services are not available in background tasks via @State,
             // so we create ephemeral instances here
-            let hk   = HealthKitService()
-            let ws   = await WeatherDataService()
-            let svc  = SnapshotService(healthKit: hk, weather: ws)
-            guard let container = try? ModelContainer(for: DailySnapshot.self, DailyEntry.self, TrackingCategory.self, CorrelationResult.self)
-            else { return }
-            let ctx = ModelContext(container)
-            await svc.buildSnapshot(for: .now, context: ctx)
-            await scheduleNextBackgroundRefresh()
+            let success = await Self.performBackgroundSnapshot()
+            if success {
+                await Self.scheduleNextBackgroundRefresh(hoursFromNow: 24)
+            } else {
+                // Retry in 1 hour if snapshot failed
+                await Self.scheduleNextBackgroundRefresh(hoursFromNow: 1)
+            }
         }
     }
 
-    private func scheduleNextBackgroundRefresh() {
+    /// Attempts to build a daily snapshot in the background. Returns true on success.
+    private static func performBackgroundSnapshot() async -> Bool {
+        let hk = HealthKitService()
+        let ws = await WeatherDataService()
+        let svc = SnapshotService(healthKit: hk, weather: ws)
+
+        guard let container = try? ModelContainer(
+            for: DailySnapshot.self, DailyEntry.self,
+            TrackingCategory.self, CorrelationResult.self
+        ) else { return false }
+
+        let ctx = ModelContext(container)
+        let today = Calendar.current.startOfDay(for: .now)
+
+        await svc.buildSnapshot(for: .now, context: ctx)
+
+        // Verify the snapshot was actually saved
+        let descriptor = FetchDescriptor<DailySnapshot>(
+            predicate: #Predicate { $0.date == today }
+        )
+        let saved = (try? ctx.fetch(descriptor))?.first
+        return saved?.isComplete == true
+    }
+
+    private static func scheduleNextBackgroundRefresh(hoursFromNow: Int) {
         let request = BGAppRefreshTaskRequest(identifier: "com.mcsante.snapshot")
-        request.earliestBeginDate = Calendar.current.date(byAdding: .hour, value: 24, to: .now)
+        request.earliestBeginDate = Calendar.current.date(byAdding: .hour, value: hoursFromNow, to: .now)
         try? BGTaskScheduler.shared.submit(request)
     }
 }

@@ -54,18 +54,28 @@ final class LogViewModel {
 
     func setValue(_ value: Double, for category: TrackingCategory) {
         guard let context else { return }
+        let clamped = Self.clampValue(value, for: category.dataType)
         if let existing = entriesForDate[category.id] {
-            existing.value = value
+            existing.value = clamped
         } else {
-            let entry = DailyEntry(date: selectedDate, value: value)
+            let entry = DailyEntry(date: selectedDate, value: clamped)
             entry.category = category
             context.insert(entry)
             entriesForDate[category.id] = entry
         }
         saveContext()
         // Update CalendarStrip dots
-        if value > 0 {
+        if clamped > 0 {
             datesWithEntries.insert(selectedDate)
+        }
+    }
+
+    /// Clamps a value to the valid range for the given data type.
+    private static func clampValue(_ value: Double, for dataType: MetricDataType) -> Double {
+        switch dataType {
+        case .scale:   return min(max(value, 0), 5)  // 0 = unset, 1-5 valid
+        case .boolean: return value >= 1 ? 1 : 0
+        case .counter: return max(value, 0)
         }
     }
 

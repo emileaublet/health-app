@@ -11,6 +11,7 @@ extension Color {
     // MARK: Metric colours
     static let sleepColor    = Color.indigo
     static let heartColor    = Color.pink
+    static let bpColor       = Color.red
     static let activityColor = Color.orange
     static let weatherColor  = Color.cyan
     static let moodColor     = Color.purple
@@ -34,7 +35,9 @@ extension Color {
         let name = metricName.lowercased()
         if name.contains("sommeil") || name.contains("sleep") || name.contains("rem") || name.contains("profond") || name.contains("deep") {
             return .sleepColor
-        } else if name.contains("fc") || name.contains("hrv") || name.contains("heart") || name.contains("tension") || name.contains("systol") || name.contains("diastol") || name.contains("blood") {
+        } else if name.contains("systol") || name.contains("diastol") || name.contains("tension") || name.contains("blood pressure") {
+            return .bpColor
+        } else if name.contains("fc") || name.contains("hrv") || name.contains("heart") {
             return .heartColor
         } else if name.contains("calorie") || name.contains("exercice") || name.contains("exercise") || name.contains("activité") || name.contains("activity") {
             return .activityColor

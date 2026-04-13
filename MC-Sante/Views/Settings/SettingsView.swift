@@ -16,6 +16,8 @@ struct SettingsView: View {
     @State private var showingExportSheet = false
     @State private var exportURL: URL?
     @State private var showingDeleteConfirmation = false
+    @State private var showingRestoreConfirmation = false
+    @State private var backupAlert: BackupAlertState?
 
     @AppStorage("section_sleep")    private var showSleep    = true
     @AppStorage("section_cardiac")  private var showCardiac  = true
@@ -124,6 +126,34 @@ struct SettingsView: View {
                     .pickerStyle(.menu)
                 }
 
+                // MARK: iCloud Backup
+                Section(L10n.sectionBackup) {
+                    Button {
+                        performBackup()
+                    } label: {
+                        Label(L10n.backupNow, systemImage: "icloud.and.arrow.up")
+                    }
+                    .foregroundStyle(Color.accentColor)
+
+                    Button {
+                        showingRestoreConfirmation = true
+                    } label: {
+                        Label(L10n.restoreFromBackup, systemImage: "icloud.and.arrow.down")
+                    }
+                    .foregroundStyle(Color.accentColor)
+
+                    LabeledContent(L10n.lastBackup) {
+                        Text(lastBackupString)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    if !CloudBackupService.isICloudAvailable {
+                        Text(L10n.icloudUnavailable)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+
                 // MARK: Export & Data
                 Section(L10n.sectionData) {
                     Button {
@@ -165,6 +195,25 @@ struct SettingsView: View {
                 Button(L10n.cancel, role: .cancel) {}
             } message: {
                 Text(L10n.removeAllDataConfirmMessage)
+            }
+            .alert(L10n.restoreConfirmTitle, isPresented: $showingRestoreConfirmation) {
+                Button(L10n.restore, role: .destructive) {
+                    performRestore()
+                }
+                Button(L10n.cancel, role: .cancel) {}
+            } message: {
+                Text(L10n.restoreConfirmMessage)
+            }
+            .alert(
+                backupAlert?.title ?? "",
+                isPresented: Binding(
+                    get: { backupAlert != nil },
+                    set: { if !$0 { backupAlert = nil } }
+                )
+            ) {
+                Button(L10n.ok) { backupAlert = nil }
+            } message: {
+                Text(backupAlert?.message ?? "")
             }
         }
         .onAppear {
@@ -213,6 +262,42 @@ struct SettingsView: View {
         )
     }
 
+    private var lastBackupString: String {
+        guard let date = CloudBackupService.lastBackupDate() else { return L10n.never }
+        return date.shortDateString
+    }
+
+    private func performBackup() {
+        do {
+            let url = try CloudBackupService.backup(context: modelContext)
+            let isICloud = url.path.contains("Mobile Documents")
+            backupAlert = BackupAlertState(
+                title: L10n.backupSuccess,
+                message: isICloud ? L10n.backupSuccessMessage : L10n.backupLocalSuccess
+            )
+        } catch {
+            backupAlert = BackupAlertState(
+                title: L10n.backupError,
+                message: error.localizedDescription
+            )
+        }
+    }
+
+    private func performRestore() {
+        do {
+            let count = try CloudBackupService.restore(context: modelContext)
+            backupAlert = BackupAlertState(
+                title: L10n.restoreSuccess,
+                message: L10n.restoredItemsCount(count)
+            )
+        } catch {
+            backupAlert = BackupAlertState(
+                title: L10n.restoreError,
+                message: error.localizedDescription
+            )
+        }
+    }
+
     private func deleteAllData() {
         do {
             try modelContext.delete(model: DailySnapshot.self)
@@ -234,6 +319,13 @@ struct SettingsView: View {
     private var buildNumber: String {
         Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
     }
+}
+
+// MARK: - BackupAlertState
+
+private struct BackupAlertState {
+    let title: String
+    let message: String
 }
 
 // MARK: - ShareSheet
