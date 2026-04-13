@@ -48,6 +48,9 @@
 		AA100000000000000000024 /* Date+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000024 /* Date+Helpers.swift */; };
 		AA100000000000000000025 /* Double+Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000025 /* Double+Formatting.swift */; };
 		AA100000000000000000026 /* Color+Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000026 /* Color+Theme.swift */; };
+		AA1000000000000000000F3 /* CloudBackupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000F3 /* CloudBackupService.swift */; };
+		AA1000000000000000000F4 /* LogMetricIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000F4 /* LogMetricIntent.swift */; };
+		AA1000000000000000000F5 /* AppShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000F5 /* AppShortcuts.swift */; };
 		AA100000000000000000027 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000027 /* Assets.xcassets */; };
 		AA100000000000000000028 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000028 /* Localizable.strings */; };
 		AA100000000000000000040 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000040 /* HealthKit.framework */; };
@@ -124,6 +127,9 @@
 		AA000000000000000000024 /* Date+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Helpers.swift"; sourceTree = "<group>"; };
 		AA000000000000000000025 /* Double+Formatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Double+Formatting.swift"; sourceTree = "<group>"; };
 		AA000000000000000000026 /* Color+Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Theme.swift"; sourceTree = "<group>"; };
+		AA0000000000000000000F3 /* CloudBackupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudBackupService.swift; sourceTree = "<group>"; };
+		AA0000000000000000000F4 /* LogMetricIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogMetricIntent.swift; sourceTree = "<group>"; };
+		AA0000000000000000000F5 /* AppShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppShortcuts.swift; sourceTree = "<group>"; };
 		AA000000000000000000027 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AA000000000000000000028 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		AA000000000000000000029 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -185,6 +191,7 @@
 				AA200000000000000000012 /* ViewModels */,
 				AA200000000000000000013 /* Views */,
 				AA200000000000000000018 /* Extensions */,
+				AA20000000000000000001B /* Intents */,
 				AA000000000000000000027 /* Assets.xcassets */,
 				AA000000000000000000028 /* Localizable.strings */,
 				AA000000000000000000029 /* Info.plist */,
@@ -223,6 +230,7 @@
 				AA00000000000000000000B /* SeedDataService.swift */,
 				AA00000000000000000000C /* NotificationService.swift */,
 				AA0000000000000000000F0 /* LocalizationManager.swift */,
+				AA0000000000000000000F3 /* CloudBackupService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -322,6 +330,15 @@
 				AA0000000000000000000F1 /* SkeletonModifier.swift */,
 			);
 			path = Shared;
+			sourceTree = "<group>";
+		};
+		AA20000000000000000001B /* Intents */ = {
+			isa = PBXGroup;
+			children = (
+				AA0000000000000000000F4 /* LogMetricIntent.swift */,
+				AA0000000000000000000F5 /* AppShortcuts.swift */,
+			);
+			path = Intents;
 			sourceTree = "<group>";
 		};
 		AB200000000000000000001 /* MC-SanteTests */ = {
@@ -469,6 +486,9 @@
 				AA100000000000000000024 /* Date+Helpers.swift in Sources */,
 				AA100000000000000000025 /* Double+Formatting.swift in Sources */,
 				AA100000000000000000026 /* Color+Theme.swift in Sources */,
+				AA1000000000000000000F3 /* CloudBackupService.swift in Sources */,
+				AA1000000000000000000F4 /* LogMetricIntent.swift in Sources */,
+				AA1000000000000000000F5 /* AppShortcuts.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
