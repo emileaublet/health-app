@@ -88,45 +88,58 @@ private struct OnboardingPage: View {
     let primaryAction: () -> Void
 
     var body: some View {
-        VStack(spacing: 32) {
-            Spacer()
+        ZStack {
+            LinearGradient(
+                colors: [Color(.systemBackground), Color.accentColor.opacity(0.06)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
 
-            Text(emoji)
-                .font(.system(size: 80))
+            VStack(spacing: 32) {
+                Spacer()
 
-            VStack(spacing: 12) {
-                Text(title)
-                    .font(.largeTitle.weight(.bold))
-                    .multilineTextAlignment(.center)
-
-                Text(description)
-                    .font(.body)
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 24)
-            }
-
-            Spacer()
-
-            VStack(spacing: 12) {
-                Button(action: primaryAction) {
-                    Text(primaryLabel)
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.accentColor)
-                        .foregroundStyle(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                ZStack {
+                    Circle()
+                        .fill(Color.accentColor.opacity(0.1))
+                        .frame(width: 120, height: 120)
+                    Text(emoji)
+                        .font(.system(size: 60))
                 }
 
-                if let secondary = secondaryLabel, let action = secondaryAction {
-                    Button(secondary, action: action)
-                        .font(.callout)
+                VStack(spacing: 12) {
+                    Text(title)
+                        .font(.largeTitle.weight(.bold))
+                        .multilineTextAlignment(.center)
+
+                    Text(description)
+                        .font(.body)
                         .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 24)
                 }
+
+                Spacer()
+
+                VStack(spacing: 12) {
+                    Button(action: primaryAction) {
+                        Text(primaryLabel)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+                    .frame(maxWidth: .infinity)
+
+                    if let secondary = secondaryLabel, let action = secondaryAction {
+                        Button(secondary, action: action)
+                            .buttonStyle(.bordered)
+                            .controlSize(.large)
+                            .frame(maxWidth: .infinity)
+                            .tint(.secondary)
+                    }
+                }
+                .padding(.horizontal, 32)
+                .padding(.bottom, 48)
             }
-            .padding(.horizontal, 32)
-            .padding(.bottom, 48)
         }
     }
 }

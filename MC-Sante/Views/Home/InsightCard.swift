@@ -106,9 +106,9 @@ struct StrengthBadge: View {
 
     private var badgeColor: Color {
         switch strength {
-        case .weak:     return .yellow
+        case .weak:     return .gray
         case .moderate: return .orange
-        case .strong:   return .red
+        case .strong:   return .green
         }
     }
 }

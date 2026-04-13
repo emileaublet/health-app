@@ -10,8 +10,13 @@ struct TrendsView: View {
         NavigationStack {
             Group {
                 if viewModel.isComputing {
-                    ProgressView(L10n.computingCorrelations)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    VStack(spacing: 12) {
+                        ProgressView()
+                        Text(L10n.computingCorrelations)
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if !viewModel.hasSufficientData {
                     insufficientDataView
                 } else {
@@ -86,10 +91,15 @@ struct TrendsView: View {
     // MARK: Insufficient data
 
     private var insufficientDataView: some View {
-        VStack(spacing: 24) {
-            Image(systemName: "chart.line.uptrend.xyaxis")
-                .font(.system(size: 64))
-                .foregroundStyle(.secondary)
+        VStack(spacing: 32) {
+            ZStack {
+                Circle()
+                    .fill(Color.accentColor.opacity(0.1))
+                    .frame(width: 120, height: 120)
+                Image(systemName: "chart.line.uptrend.xyaxis")
+                    .font(.system(size: 52))
+                    .foregroundStyle(Color.accentColor)
+            }
 
             VStack(spacing: 8) {
                 Text(L10n.learningInProgress)
@@ -106,6 +116,10 @@ struct TrendsView: View {
                         .foregroundStyle(Color.accentColor)
                 }
             }
+
+            ProgressView(value: Double(max(0, 7 - viewModel.daysUntilReady)), total: 7)
+                .tint(Color.accentColor)
+                .padding(.horizontal, 48)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -155,6 +169,18 @@ struct TrendsView: View {
         VStack(alignment: .leading, spacing: 10) {
             Text(L10n.details)
                 .font(.headline)
+
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(Color(.tertiarySystemFill))
+                        .frame(height: 8)
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(result.pearsonR > 0 ? Color.green : Color.red)
+                        .frame(width: abs(result.pearsonR) * geo.size.width, height: 8)
+                }
+            }
+            .frame(height: 8)
 
             infoRow(L10n.coefficientR, value: String(format: "%+.4f", result.pearsonR))
             infoRow(L10n.strengthLabel, value: result.strength.localizedLabel)
