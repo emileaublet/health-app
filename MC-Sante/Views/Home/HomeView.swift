@@ -85,7 +85,7 @@ struct HomeView: View {
                         .foregroundStyle(.secondary)
                     Text(LocalizationManager.shared.language == .french ? "↩ Aujourd'hui" : "↩ Today")
                         .font(.caption2)
-                        .foregroundStyle(.accentColor)
+                        .foregroundStyle(Color.accentColor)
                         .opacity(viewModel.isToday ? 0 : 1)
                 }
             }
@@ -326,29 +326,26 @@ struct HomeView: View {
     // MARK: Cycle
 
     private var cycleSection: some View {
-        let hasCycleData = viewModel.recentSnapshots.contains { ($0.menstrualFlowRaw ?? 0) > 0 }
-        return Group {
-            if hasCycleData {
-                let snap = viewModel.todaySnapshot
-                VStack(alignment: .leading, spacing: 14) {
-                    sectionHeader(L10n.sectionCycle, icon: "drop.fill")
+        let snap = viewModel.todaySnapshot
+        return VStack(alignment: .leading, spacing: 14) {
+            sectionHeader(L10n.sectionCycle, icon: "drop.fill")
 
-                    CycleChartView(snapshots: viewModel.recentSnapshots, selectedDate: viewModel.selectedDate)
-                        .frame(height: 110)
-
-                    Divider()
-
-                    MetricChip(
-                        emoji: "🩸", title: L10n.menstrualFlow,
-                        value: snap?.menstrualFlowRaw.map { menstrualFlowLabel($0) } ?? "—",
-                        accentColor: snap?.menstrualFlowRaw != nil ? .pink : .secondary
-                    )
-                }
-                .padding(16)
-                .background(Color(.secondarySystemBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+            if hasChartData {
+                CycleChartView(snapshots: viewModel.recentSnapshots, selectedDate: viewModel.selectedDate)
+                    .frame(height: 110)
             }
+
+            Divider()
+
+            MetricChip(
+                emoji: "🩸", title: L10n.menstrualFlow,
+                value: snap?.menstrualFlowRaw.map { menstrualFlowLabel($0) } ?? "—",
+                accentColor: snap?.menstrualFlowRaw != nil ? .pink : .secondary
+            )
         }
+        .padding(16)
+        .background(Color(.secondarySystemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 
     private func menstrualFlowLabel(_ rawValue: Int) -> String {
@@ -402,29 +399,26 @@ struct HomeView: View {
     // MARK: Humeur
 
     private var moodSection: some View {
-        let hasMoodData = viewModel.recentSnapshots.contains { $0.moodValence != nil }
-        return Group {
-            if hasMoodData {
-                let snap = viewModel.todaySnapshot
-                VStack(alignment: .leading, spacing: 14) {
-                    sectionHeader(L10n.sectionMood, icon: "brain.head.profile")
+        let snap = viewModel.todaySnapshot
+        return VStack(alignment: .leading, spacing: 14) {
+            sectionHeader(L10n.sectionMood, icon: "brain.head.profile")
 
-                    MoodChartView(snapshots: viewModel.recentSnapshots, selectedDate: viewModel.selectedDate)
-                        .frame(height: 130)
-
-                    Divider()
-
-                    MetricChip(
-                        emoji: "🧠", title: L10n.valence,
-                        value: snap?.moodValence.map { moodLabel($0) } ?? "—",
-                        accentColor: snap?.moodValence != nil ? .moodColor : .secondary
-                    )
-                }
-                .padding(16)
-                .background(Color(.secondarySystemBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+            if hasChartData {
+                MoodChartView(snapshots: viewModel.recentSnapshots, selectedDate: viewModel.selectedDate)
+                    .frame(height: 130)
             }
+
+            Divider()
+
+            MetricChip(
+                emoji: "🧠", title: L10n.valence,
+                value: snap?.moodValence.map { moodLabel($0) } ?? "—",
+                accentColor: snap?.moodValence != nil ? .moodColor : .secondary
+            )
         }
+        .padding(16)
+        .background(Color(.secondarySystemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 
     // MARK: Insight

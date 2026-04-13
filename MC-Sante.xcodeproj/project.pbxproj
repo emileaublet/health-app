@@ -27,6 +27,7 @@
 		AA100000000000000000011 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000011 /* HomeView.swift */; };
 		AA100000000000000000012 /* MetricCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000012 /* MetricCard.swift */; };
 		AA100000000000000000013 /* InsightCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000013 /* InsightCard.swift */; };
+		AA1000000000000000000F2 /* SectionCharts.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000F2 /* SectionCharts.swift */; };
 		AA100000000000000000014 /* LogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000014 /* LogView.swift */; };
 		AA100000000000000000015 /* CounterInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000015 /* CounterInput.swift */; };
 		AA100000000000000000016 /* BooleanToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000016 /* BooleanToggle.swift */; };
@@ -102,6 +103,7 @@
 		AA000000000000000000011 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		AA000000000000000000012 /* MetricCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricCard.swift; sourceTree = "<group>"; };
 		AA000000000000000000013 /* InsightCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightCard.swift; sourceTree = "<group>"; };
+		AA0000000000000000000F2 /* SectionCharts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionCharts.swift; sourceTree = "<group>"; };
 		AA000000000000000000014 /* LogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogView.swift; sourceTree = "<group>"; };
 		AA000000000000000000015 /* CounterInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CounterInput.swift; sourceTree = "<group>"; };
 		AA000000000000000000016 /* BooleanToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooleanToggle.swift; sourceTree = "<group>"; };
@@ -255,6 +257,7 @@
 				AA000000000000000000011 /* HomeView.swift */,
 				AA000000000000000000012 /* MetricCard.swift */,
 				AA000000000000000000013 /* InsightCard.swift */,
+				AA0000000000000000000F2 /* SectionCharts.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -445,6 +448,7 @@
 				AA100000000000000000011 /* HomeView.swift in Sources */,
 				AA100000000000000000012 /* MetricCard.swift in Sources */,
 				AA100000000000000000013 /* InsightCard.swift in Sources */,
+				AA1000000000000000000F2 /* SectionCharts.swift in Sources */,
 				AA100000000000000000014 /* LogView.swift in Sources */,
 				AA100000000000000000015 /* CounterInput.swift in Sources */,
 				AA100000000000000000016 /* BooleanToggle.swift in Sources */,
