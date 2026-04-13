@@ -50,18 +50,19 @@ enum CorrelationEngine {
         var series: [MetricSeries] = []
 
         // Métriques automatiques depuis DailySnapshot
+        let isFrench = LocalizationManager.shared.language == .french
         let snapshotMetrics: [(String, String, (DailySnapshot) -> Double?)] = [
-            ("Sommeil (heures)",     "😴", { $0.sleepDurationHours }),
-            ("Sommeil REM (min)",    "🌙", { $0.sleepREMMinutes }),
-            ("Sommeil profond (min)","💤", { $0.sleepDeepMinutes }),
-            ("FC repos",             "❤️", { $0.restingHeartRate }),
-            ("HRV (ms)",             "💓", { $0.hrvSDNN }),
-            ("Calories actives",     "🔥", { $0.activeCalories }),
-            ("Minutes exercice",     "🏃", { $0.exerciseMinutes }),
-            ("Humeur (valence)",     "🧠", { $0.moodValence }),
-            ("Température (°C)",     "🌡️", { $0.temperatureCelsius }),
-            ("Pression (hPa)",       "📊", { $0.pressureHPa }),
-            ("Humidité (%)",         "💧", { $0.humidityPercent }),
+            (isFrench ? "Sommeil (heures)"      : "Sleep (hours)",       "😴", { $0.sleepDurationHours }),
+            (isFrench ? "Sommeil REM (min)"     : "REM Sleep (min)",     "🌙", { $0.sleepREMMinutes }),
+            (isFrench ? "Sommeil profond (min)" : "Deep Sleep (min)",    "💤", { $0.sleepDeepMinutes }),
+            (isFrench ? "FC repos"              : "Resting HR",          "❤️", { $0.restingHeartRate }),
+            ("HRV (ms)",                                                  "💓", { $0.hrvSDNN }),
+            (isFrench ? "Calories actives"      : "Active Calories",     "🔥", { $0.activeCalories }),
+            (isFrench ? "Minutes exercice"      : "Exercise (min)",      "🏃", { $0.exerciseMinutes }),
+            (isFrench ? "Humeur (valence)"      : "Mood (valence)",      "🧠", { $0.moodValence }),
+            (isFrench ? "Température (°C)"      : "Temperature (°C)",    "🌡️", { $0.temperatureCelsius }),
+            (isFrench ? "Pression (hPa)"        : "Pressure (hPa)",     "📊", { $0.pressureHPa }),
+            (isFrench ? "Humidité (%)"          : "Humidity (%)",        "💧", { $0.humidityPercent }),
         ]
 
         for (name, emoji, extractor) in snapshotMetrics {
@@ -160,17 +161,30 @@ enum CorrelationEngine {
         lag: Int,
         window: Int
     ) -> String {
-        let direction = r > 0 ? "augmente" : "diminue"
-        let lagText = lag == 0 ? "le même jour" : "le lendemain"
-        let strengthText: String
-        switch abs(r) {
-        case 0.7...: strengthText = "forte"
-        case 0.5...: strengthText = "modérée"
-        default:     strengthText = "faible"
-        }
         let sign = r > 0 ? "+" : ""
         let rFormatted = String(format: "%.2f", r)
-        return "Sur les \(window) derniers jours, quand \(metricA) est élevé·e, \(metricB) tend à \(direction) \(lagText). Corrélation \(strengthText) (r=\(sign)\(rFormatted), n=\(window) j)."
+
+        if LocalizationManager.shared.language == .french {
+            let direction = r > 0 ? "augmente" : "diminue"
+            let lagText = lag == 0 ? "le même jour" : "le lendemain"
+            let strengthText: String
+            switch abs(r) {
+            case 0.7...: strengthText = "forte"
+            case 0.5...: strengthText = "modérée"
+            default:     strengthText = "faible"
+            }
+            return "Sur les \(window) derniers jours, quand \(metricA) est élevé·e, \(metricB) tend à \(direction) \(lagText). Corrélation \(strengthText) (r=\(sign)\(rFormatted), n=\(window) j)."
+        } else {
+            let direction = r > 0 ? "increase" : "decrease"
+            let lagText = lag == 0 ? "on the same day" : "the next day"
+            let strengthText: String
+            switch abs(r) {
+            case 0.7...: strengthText = "strong"
+            case 0.5...: strengthText = "moderate"
+            default:     strengthText = "weak"
+            }
+            return "Over the last \(window) days, when \(metricA) is high, \(metricB) tends to \(direction) \(lagText). \(strengthText.capitalized) correlation (r=\(sign)\(rFormatted), n=\(window) d)."
+        }
     }
 
     // MARK: Z-score normalisation (for chart display)

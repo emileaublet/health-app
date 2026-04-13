@@ -16,6 +16,13 @@
     <key>UIBackgroundModes</key>
     <array>
         <string>processing</string>
+        <string>fetch</string>
+    </array>
+
+    <!-- Background Task Identifiers -->
+    <key>BGTaskSchedulerPermittedIdentifiers</key>
+    <array>
+        <string>com.mcsante.snapshot</string>
     </array>
 
     <!-- App Info -->

@@ -29,21 +29,21 @@ struct ContentView: View {
 
     private var mainTabView: some View {
         TabView(selection: $selectedTab) {
-            HomeView(snapshotService: snapshotService)
+            HomeView(snapshotService: snapshotService, selectedTab: $selectedTab)
                 .tabItem {
-                    Label("Accueil", systemImage: "house.fill")
+                    Label(L10n.tabHome, systemImage: "house.fill")
                 }
                 .tag(Tab.home)
 
             LogView()
                 .tabItem {
-                    Label("Saisie", systemImage: "pencil.circle.fill")
+                    Label(L10n.tabLog, systemImage: "pencil.circle.fill")
                 }
                 .tag(Tab.log)
 
             TrendsView()
                 .tabItem {
-                    Label("Tendances", systemImage: "chart.line.uptrend.xyaxis")
+                    Label(L10n.tabTrends, systemImage: "chart.line.uptrend.xyaxis")
                 }
                 .tag(Tab.trends)
 
@@ -53,7 +53,7 @@ struct ContentView: View {
                 weather: weather
             )
             .tabItem {
-                Label("Réglages", systemImage: "gearshape.fill")
+                Label(L10n.tabSettings, systemImage: "gearshape.fill")
             }
             .tag(Tab.settings)
         }

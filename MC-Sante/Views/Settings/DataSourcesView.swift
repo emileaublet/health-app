@@ -10,8 +10,8 @@ struct DataSourcesView: View {
                 statusRow(
                     icon: "heart.fill",
                     color: .red,
-                    title: "Apple Santé",
-                    status: healthKit.isAuthorized ? "Autorisé" : "Non autorisé",
+                    title: L10n.appleHealth,
+                    status: healthKit.isAuthorized ? L10n.authorized : L10n.notAuthorized,
                     isOk: healthKit.isAuthorized
                 )
 
@@ -21,18 +21,26 @@ struct DataSourcesView: View {
                         .foregroundStyle(.red)
                 }
 
-                Button {
-                    Task { await healthKit.requestAuthorization() }
-                } label: {
-                    Label(
-                        healthKit.isAuthorized ? "Mettre à jour les permissions" : "Autoriser l'accès",
-                        systemImage: "lock.open.fill"
-                    )
+                if healthKit.isAuthorized {
+                    Button {
+                        if let url = URL(string: "x-apple-health://") {
+                            UIApplication.shared.open(url)
+                        }
+                    } label: {
+                        Label(L10n.updatePermissions, systemImage: "arrow.up.forward.app")
+                    }
+                    .foregroundStyle(Color.accentColor)
+                } else {
+                    Button {
+                        Task { await healthKit.requestAuthorization() }
+                    } label: {
+                        Label(L10n.authorizeAccess, systemImage: "lock.open.fill")
+                    }
+                    .foregroundStyle(Color.accentColor)
                 }
-                .foregroundStyle(.accentColor)
             }
 
-            Section("Météo") {
+            Section(L10n.weatherSection) {
                 statusRow(
                     icon: "cloud.sun.fill",
                     color: .orange,
@@ -45,14 +53,14 @@ struct DataSourcesView: View {
                 Button {
                     weather.requestLocationPermission()
                 } label: {
-                    Label("Autoriser la localisation", systemImage: "location.fill")
+                    Label(L10n.authorizeLocation, systemImage: "location.fill")
                 }
-                .foregroundStyle(.accentColor)
+                .foregroundStyle(Color.accentColor)
                 .disabled(weather.locationAuthStatus == .authorizedWhenInUse)
 
                 if let snap = weather.lastSnapshot {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Dernières données météo :")
+                        Text(L10n.latestWeatherData)
                             .font(.caption.weight(.medium))
                         Text("\(snap.temperatureCelsius.oneDecimal) °C · \(Int(snap.pressureHPa)) hPa · \(Int(snap.humidityPercent)) %")
                             .font(.caption)
@@ -61,15 +69,23 @@ struct DataSourcesView: View {
                 }
             }
 
-            Section("À propos") {
-                LabeledContent("WeatherKit", value: "Apple Inc. — inclus avec Developer Program")
-                LabeledContent("Open-Meteo", value: "open-meteo.com — gratuit, sans clé")
-                Text("⚠️ Attribution WeatherKit requise : logo Weather + lien légal Apple.")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
+            Section(L10n.aboutSection) {
+                LabeledContent("Open-Meteo", value: "open-meteo.com")
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "cloud.sun.fill")
+                            .foregroundStyle(.blue)
+                        Text(L10n.weatherAttributionLabel)
+                            .font(.caption)
+                        Text("Apple Weather")
+                            .font(.caption.weight(.semibold))
+                    }
+                    Link("Legal Attribution", destination: URL(string: "https://weatherkit.apple.com/legal-attribution.html")!)
+                        .font(.caption2)
+                }
             }
         }
-        .navigationTitle("Sources de données")
+        .navigationTitle(L10n.dataSourcesTitle)
         .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -93,12 +109,12 @@ struct DataSourcesView: View {
 
     private var locationStatusLabel: String {
         switch weather.locationAuthStatus {
-        case .notDetermined:      return "Non demandé"
-        case .restricted:         return "Restreint"
-        case .denied:             return "Refusé"
-        case .authorizedAlways:   return "Autorisé (toujours)"
-        case .authorizedWhenInUse: return "Autorisé"
-        @unknown default:         return "Inconnu"
+        case .notDetermined:      return L10n.locationNotDetermined
+        case .restricted:         return L10n.locationRestricted
+        case .denied:             return L10n.locationDenied
+        case .authorizedAlways:   return L10n.locationAuthorizedAlways
+        case .authorizedWhenInUse: return L10n.locationAuthorized
+        @unknown default:         return L10n.locationUnknown
         }
     }
 }

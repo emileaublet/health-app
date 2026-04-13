@@ -14,7 +14,7 @@ struct CounterInput: View {
             } label: {
                 Image(systemName: "minus.circle.fill")
                     .font(.title2)
-                    .foregroundStyle(value > minimum ? .accentColor : .secondary)
+                    .foregroundStyle(value > minimum ? Color.accentColor : Color.secondary)
             }
             .sensoryFeedback(.impact(weight: .light), trigger: value)
             .disabled(value <= minimum)
@@ -33,7 +33,7 @@ struct CounterInput: View {
             } label: {
                 Image(systemName: "plus.circle.fill")
                     .font(.title2)
-                    .foregroundStyle(value < maximum ? .accentColor : .secondary)
+                    .foregroundStyle(value < maximum ? Color.accentColor : Color.secondary)
             }
             .sensoryFeedback(.impact(weight: .light), trigger: value)
             .disabled(value >= maximum)

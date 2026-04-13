@@ -30,18 +30,15 @@ private struct ScaleCircle: View {
         }) {
             ZStack {
                 Circle()
-                    .fill(isSelected ? fillColor : Color(.secondarySystemBackground))
+                    .fill(isSelected ? fillColor : Color(.systemGray3))
                     .frame(width: 40, height: 40)
-                    .overlay {
-                        Circle()
-                            .strokeBorder(isSelected ? fillColor : Color(.systemGray4), lineWidth: 1.5)
-                    }
 
                 Text("\(level)")
                     .font(.callout.weight(isSelected ? .bold : .regular))
-                    .foregroundStyle(isSelected ? .white : .primary)
+                    .foregroundColor(isSelected ? .white : Color(.label))
             }
         }
+        .buttonStyle(.plain)
         .sensoryFeedback(.selection, trigger: isSelected)
         .scaleEffect(isSelected ? 1.1 : 1.0)
         .animation(.spring(response: 0.25, dampingFraction: 0.6), value: isSelected)

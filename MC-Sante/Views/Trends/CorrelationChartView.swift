@@ -9,8 +9,15 @@ struct CorrelationChartView: View {
     @State private var chartMode: ChartMode = .timeline
 
     enum ChartMode: String, CaseIterable {
-        case timeline = "Chronologie"
-        case scatter  = "Nuage"
+        case timeline
+        case scatter
+
+        var label: String {
+            switch self {
+            case .timeline: return L10n.timeline
+            case .scatter:  return L10n.scatter
+            }
+        }
     }
 
     var body: some View {
@@ -18,7 +25,7 @@ struct CorrelationChartView: View {
             // Mode picker
             Picker("Mode", selection: $chartMode) {
                 ForEach(ChartMode.allCases, id: \.self) { mode in
-                    Text(mode.rawValue).tag(mode)
+                    Text(mode.label).tag(mode)
                 }
             }
             .pickerStyle(.segmented)
@@ -29,7 +36,7 @@ struct CorrelationChartView: View {
             }
 
             // Disclaimer
-            Text("⚠️ Corrélation statistique ≠ causalité. n = \(result.sampleSize) jours.")
+            Text(L10n.chartDisclaimer(result.sampleSize))
                 .font(.caption2)
                 .foregroundStyle(.tertiary)
         }
@@ -85,9 +92,9 @@ struct CorrelationChartView: View {
             }
         }
         .frame(height: 220)
-        .chartAnnotation(position: .overlay, alignment: .topLeading) {
+        .overlay(alignment: .topLeading) {
             if result.lagDays > 0 {
-                Text("↺ Décalage \(result.lagDays) j")
+                Text(L10n.lagOverlay(result.lagDays))
                     .font(.caption2)
                     .foregroundStyle(.secondary)
                     .padding(4)

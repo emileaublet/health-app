@@ -24,9 +24,9 @@ struct OnboardingView: View {
     private var welcomePage: some View {
         OnboardingPage(
             emoji: "🌱",
-            title: "Bienvenue, Marie-Claude",
-            description: "Cette app t'aide à comprendre ce qui influence ta santé, en croisant automatiquement tes données Apple Watch avec tes habitudes quotidiennes.",
-            primaryLabel: "Commencer",
+            title: L10n.welcomeTitle,
+            description: L10n.welcomeDescription,
+            primaryLabel: L10n.startButton,
             primaryAction: { currentPage = 1 }
         )
     }
@@ -36,11 +36,11 @@ struct OnboardingView: View {
     private var healthKitPage: some View {
         OnboardingPage(
             emoji: "❤️",
-            title: "Données de santé",
-            description: "MC Santé lit ton sommeil, ta fréquence cardiaque, ton activité et ton humeur depuis Apple Santé. Tes données ne quittent jamais ton iPhone.",
-            secondaryLabel: "Peut-être plus tard",
+            title: L10n.healthDataTitle,
+            description: L10n.healthDataDescription,
+            secondaryLabel: L10n.maybeLater,
             secondaryAction: { currentPage = 2 },
-            primaryLabel: "Autoriser l'accès",
+            primaryLabel: L10n.authorizeAccessButton,
             primaryAction: {
                 Task {
                     await healthKit.requestAuthorization()
@@ -55,11 +55,11 @@ struct OnboardingView: View {
     private var locationPage: some View {
         OnboardingPage(
             emoji: "🌡️",
-            title: "Données météo",
-            description: "MC Santé utilise ta position pour récupérer la pression atmosphérique et la température. Idéal pour détecter si la météo influence ton énergie ou tes migraines.",
-            secondaryLabel: "Passer",
+            title: L10n.weatherTitle,
+            description: L10n.weatherDescription,
+            secondaryLabel: L10n.skip,
             secondaryAction: { complete() },
-            primaryLabel: "Autoriser la localisation",
+            primaryLabel: L10n.authorizeLocationButton,
             primaryAction: {
                 weather.requestLocationPermission()
                 Task {

@@ -25,14 +25,14 @@ extension Date {
         let f = DateFormatter()
         f.dateStyle = .medium
         f.timeStyle = .none
-        f.locale = Locale(identifier: "fr_CA")
+        f.locale = LocalizationManager.shared.locale
         return f.string(from: self)
     }
 
     var dayOfWeekString: String {
         let f = DateFormatter()
         f.dateFormat = "EEE"
-        f.locale = Locale(identifier: "fr_CA")
+        f.locale = LocalizationManager.shared.locale
         return f.string(from: self).capitalized
     }
 
@@ -45,7 +45,7 @@ extension Date {
     var monthYearString: String {
         let f = DateFormatter()
         f.dateFormat = "MMMM yyyy"
-        f.locale = Locale(identifier: "fr_CA")
+        f.locale = LocalizationManager.shared.locale
         return f.string(from: self).capitalized
     }
 

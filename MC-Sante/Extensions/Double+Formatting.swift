@@ -12,6 +12,17 @@ extension Double {
         return "\(h)h\(String(format: "%02d", m))"
     }
 
+    /// Formats minutes as "Xh YY" when >= 60, otherwise "X min"
+    var minutesFormatted: String {
+        let total = Int(self)
+        if total >= 60 {
+            let h = total / 60
+            let m = total % 60
+            return "\(h)h\(String(format: "%02d", m))"
+        }
+        return "\(total) min"
+    }
+
     var oneDecimal: String {
         String(format: "%.1f", self)
     }
@@ -28,7 +39,7 @@ extension Double {
     func formatted(for dataType: MetricDataType) -> String {
         switch dataType {
         case .counter: return noDecimal
-        case .boolean: return self == 1 ? "Oui" : "Non"
+        case .boolean: return L10n.booleanDisplay(self)
         case .scale:   return noDecimal
         }
     }

@@ -10,9 +10,9 @@ enum MetricDataType: String, Codable, CaseIterable {
 
     var label: String {
         switch self {
-        case .counter: return "Compteur"
-        case .boolean: return "Oui / Non"
-        case .scale:   return "Échelle 1–5"
+        case .counter: return L10n.dataTypeCounter
+        case .boolean: return L10n.dataTypeBoolean
+        case .scale:   return L10n.dataTypeScale
         }
     }
 }

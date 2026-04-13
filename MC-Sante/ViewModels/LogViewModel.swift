@@ -44,7 +44,7 @@ final class LogViewModel {
 
     func loadCategories() {
         guard let context else { return }
-        var descriptor = FetchDescriptor<TrackingCategory>(
+        let descriptor = FetchDescriptor<TrackingCategory>(
             predicate: #Predicate { $0.isActive == true },
             sortBy: [SortDescriptor(\.sortOrder)]
         )

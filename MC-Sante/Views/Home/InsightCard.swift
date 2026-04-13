@@ -7,7 +7,7 @@ struct InsightCard: View {
         VStack(alignment: .leading, spacing: 12) {
             // Header
             HStack {
-                Label("Corrélation détectée", systemImage: "sparkles")
+                Label(L10n.correlationDetected, systemImage: "sparkles")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(.secondary)
                 Spacer()
@@ -37,7 +37,7 @@ struct InsightCard: View {
             // Footer
             HStack(spacing: 4) {
                 if insight.lagDays > 0 {
-                    Label("Décalage \(insight.lagDays) j", systemImage: "clock.arrow.circlepath")
+                    Label(L10n.insightLag(insight.lagDays), systemImage: "clock.arrow.circlepath")
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                 }
@@ -47,7 +47,7 @@ struct InsightCard: View {
                     .foregroundStyle(.secondary)
                 Text("·")
                     .foregroundStyle(.secondary)
-                Text("\(insight.sampleSize) jours")
+                Text(L10n.sampleDays(insight.sampleSize))
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }
@@ -73,7 +73,7 @@ struct StrengthBadge: View {
     let strength: CorrelationStrength
 
     var body: some View {
-        Text(strength.label)
+        Text(strength.localizedLabel)
             .font(.caption2.weight(.semibold))
             .padding(.horizontal, 8)
             .padding(.vertical, 3)

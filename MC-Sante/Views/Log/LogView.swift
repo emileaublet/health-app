@@ -20,6 +20,12 @@ struct LogView: View {
                 // Liste des catégories
                 ScrollView {
                     LazyVStack(spacing: 12) {
+                        if viewModel.categories.isEmpty {
+                            ForEach(0..<5, id: \.self) { _ in
+                                SkeletonRow()
+                            }
+                        }
+
                         ForEach(viewModel.categories) { category in
                             CategoryRow(
                                 category: category,
@@ -34,9 +40,9 @@ struct LogView: View {
                         Button {
                             showingAddCategory = true
                         } label: {
-                            Label("Ajouter une catégorie", systemImage: "plus.circle")
+                            Label(L10n.addCategory, systemImage: "plus.circle")
                                 .font(.callout)
-                                .foregroundStyle(.accentColor)
+                                .foregroundStyle(Color.accentColor)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 14)
                                 .background(Color(.secondarySystemBackground))
@@ -51,7 +57,7 @@ struct LogView: View {
                     .padding()
                 }
             }
-            .navigationTitle("Saisie")
+            .navigationTitle(L10n.logTitle)
             .navigationBarTitleDisplayMode(.large)
             .sheet(isPresented: $showingAddCategory) {
                 CategoryEditorSheet(viewModel: viewModel)
@@ -99,8 +105,8 @@ struct LogView: View {
     }
 
     private var dateTitle: String {
-        if viewModel.isToday { return "Aujourd'hui" }
-        if Calendar.current.isDateInYesterday(viewModel.selectedDate) { return "Hier" }
+        if viewModel.isToday { return L10n.today }
+        if Calendar.current.isDateInYesterday(viewModel.selectedDate) { return L10n.yesterday }
         return viewModel.selectedDate.dayOfWeekString
     }
 

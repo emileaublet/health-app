@@ -9,15 +9,17 @@ struct EmojiPicker: View {
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 4), count: 8)
 
-    private let categorizedEmojis: [(String, [String])] = [
-        ("Récents",    []),
-        ("Santé",      ["💊","🩺","🩻","🩹","🧬","🫀","🧠","🦷","🦴","👁","💉","🩸","🌡️","⚕️"]),
-        ("Alimentation",["☕","🍵","🧃","🥤","🍎","🥑","🥦","🥗","🍕","🍔","🧁","🍬","🍫","🥐","🥩","🐟","🥚","🥛","🍷","🍺"]),
-        ("Activité",   ["🏃","🚴","🏊","🧘","🏋️","⚽","🎾","🧗","🤸","🏔️","🚶","🤾","🏄","🛹","🤺"]),
-        ("Émotions",   ["😰","😤","😌","😊","😄","😢","😡","😴","🥱","😮‍💨","🤩","😔","🤯","😇","🥳"]),
-        ("Nature",     ["🌡️","☀️","🌧️","❄️","🌬️","⛅","🌊","🌿","🍃","🌸","🌙","⭐","🌈","🌻"]),
-        ("Divers",     ["⚡","🔥","💧","✨","🎯","🏆","💪","🛌","🚿","📊","📈","🔬","🧪","💡","⏰"]),
-    ]
+    private var categorizedEmojis: [(String, [String])] {
+        [
+            (L10n.emojiRecents,  []),
+            (L10n.emojiHealth,   ["💊","🩺","🩻","🩹","🧬","🫀","🧠","🦷","🦴","👁","💉","🩸","🌡️","⚕️"]),
+            (L10n.emojiFood,     ["☕","🍵","🧃","🥤","🍎","🥑","🥦","🥗","🍕","🍔","🧁","🍬","🍫","🥐","🥩","🐟","🥚","🥛","🍷","🍺"]),
+            (L10n.emojiActivity, ["🏃","🚴","🏊","🧘","🏋️","⚽","🎾","🧗","🤸","🏔️","🚶","🤾","🏄","🛹","🤺"]),
+            (L10n.emojiEmotions, ["😰","😤","😌","😊","😄","😢","😡","😴","🥱","😮‍💨","🤩","😔","🤯","😇","🥳"]),
+            (L10n.emojiNature,   ["🌡️","☀️","🌧️","❄️","🌬️","⛅","🌊","🌿","🍃","🌸","🌙","⭐","🌈","🌻"]),
+            (L10n.emojiMisc,     ["⚡","🔥","💧","✨","🎯","🏆","💪","🛌","🚿","📊","📈","🔬","🧪","💡","⏰"]),
+        ]
+    }
 
     var body: some View {
         NavigationStack {
@@ -26,7 +28,7 @@ struct EmojiPicker: View {
                 HStack {
                     Image(systemName: "magnifyingglass")
                         .foregroundStyle(.secondary)
-                    TextField("Rechercher un emoji…", text: $searchText)
+                    TextField(L10n.searchEmoji, text: $searchText)
                         .autocorrectionDisabled()
                 }
                 .padding(10)
@@ -40,7 +42,7 @@ struct EmojiPicker: View {
                     ScrollView {
                         LazyVStack(alignment: .leading, spacing: 16) {
                             if !recentEmojis.isEmpty {
-                                emojiSection(title: "Récents", emojis: recentEmojis)
+                                emojiSection(title: L10n.emojiRecents, emojis: recentEmojis)
                             }
                             ForEach(categorizedEmojis.dropFirst(), id: \.0) { title, emojis in
                                 emojiSection(title: title, emojis: emojis)
@@ -61,11 +63,11 @@ struct EmojiPicker: View {
                     }
                 }
             }
-            .navigationTitle("Choisir un emoji")
+            .navigationTitle(L10n.chooseEmoji)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Annuler") { dismiss() }
+                    Button(L10n.cancel) { dismiss() }
                 }
             }
         }

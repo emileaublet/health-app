@@ -29,7 +29,7 @@ struct CorrelationRow: View {
                 HStack(spacing: 6) {
                     StrengthBadge(strength: result.strength)
                     if result.lagDays > 0 {
-                        Text("↺ \(result.lagDays) j")
+                        Text("↺ " + L10n.lagDays(result.lagDays))
                             .font(.caption2)
                             .foregroundStyle(.secondary)
                     }

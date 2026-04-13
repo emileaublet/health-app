@@ -13,19 +13,11 @@ struct MC_SanteApp: App {
     init() {
         let hk = HealthKitService()
         let ws = WeatherDataService()
+        hk.checkAuthorizationStatus()
         _healthKit       = State(initialValue: hk)
         _weatherService  = State(initialValue: ws)
         _notifications   = State(initialValue: NotificationService())
         _snapshotService = State(initialValue: SnapshotService(healthKit: hk, weather: ws))
-
-        // Register background task
-        BGTaskScheduler.shared.register(
-            forTaskWithIdentifier: "com.mcsante.snapshot",
-            using: nil
-        ) { task in
-            // Handled in AppDelegate or SwiftUI background task modifier
-            task.setTaskCompleted(success: true)
-        }
     }
 
     var body: some Scene {
@@ -48,7 +40,6 @@ struct MC_SanteApp: App {
             CorrelationResult.self,
         ], inMemory: false) { result in
             if case .success(let container) = result {
-                // Seed default categories if needed
                 let context = container.mainContext
                 SeedDataService.seedIfNeeded(context: context)
             }
@@ -58,13 +49,13 @@ struct MC_SanteApp: App {
             // Services are not available in background tasks via @State,
             // so we create ephemeral instances here
             let hk   = HealthKitService()
-            let ws   = WeatherDataService()
+            let ws   = await WeatherDataService()
             let svc  = SnapshotService(healthKit: hk, weather: ws)
             guard let container = try? ModelContainer(for: DailySnapshot.self, DailyEntry.self, TrackingCategory.self, CorrelationResult.self)
             else { return }
             let ctx = ModelContext(container)
             await svc.buildSnapshot(for: .now, context: ctx)
-            scheduleNextBackgroundRefresh()
+            await scheduleNextBackgroundRefresh()
         }
     }
 

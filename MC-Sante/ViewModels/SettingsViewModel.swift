@@ -96,7 +96,10 @@ enum CSVExporter {
         formatter.dateFormat = "yyyy-MM-dd"
 
         var lines: [String] = []
-        var header = "Date,Sommeil (h),REM (min),Deep (min),FC repos,HRV,Calories,Exercice (min),Humeur (valence),Temp (°C),Pression (hPa),Humidité (%)"
+        let isFrench = LocalizationManager.shared.language == .french
+        var header = isFrench
+            ? "Date,Sommeil (h),REM (min),Deep (min),FC repos,HRV,Calories,Exercice (min),Humeur (valence),Temp (°C),Pression (hPa),Humidité (%)"
+            : "Date,Sleep (h),REM (min),Deep (min),Resting HR,HRV,Calories,Exercise (min),Mood (valence),Temp (°C),Pressure (hPa),Humidity (%)"
         for cat in categories { header += ",\(cat.name)" }
         lines.append(header)
 

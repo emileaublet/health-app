@@ -31,15 +31,16 @@ extension Color {
     }
 
     static func metricColor(for metricName: String) -> Color {
-        if metricName.contains("Sommeil") || metricName.contains("REM") || metricName.contains("profond") {
+        let name = metricName.lowercased()
+        if name.contains("sommeil") || name.contains("sleep") || name.contains("rem") || name.contains("profond") || name.contains("deep") {
             return .sleepColor
-        } else if metricName.contains("FC") || metricName.contains("HRV") || metricName.contains("Tension") {
+        } else if name.contains("fc") || name.contains("hrv") || name.contains("heart") || name.contains("tension") {
             return .heartColor
-        } else if metricName.contains("Calories") || metricName.contains("exercice") || metricName.contains("Activité") {
+        } else if name.contains("calorie") || name.contains("exercice") || name.contains("exercise") || name.contains("activité") || name.contains("activity") {
             return .activityColor
-        } else if metricName.contains("Temp") || metricName.contains("Pression") || metricName.contains("Humidité") {
+        } else if name.contains("temp") || name.contains("pression") || name.contains("pressure") || name.contains("humidité") || name.contains("humidity") {
             return .weatherColor
-        } else if metricName.contains("Humeur") || metricName.contains("stress") || metricName.contains("Stress") {
+        } else if name.contains("humeur") || name.contains("mood") || name.contains("stress") {
             return .moodColor
         } else {
             return .manualColor

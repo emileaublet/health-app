@@ -19,6 +19,7 @@
 		AA10000000000000000000A /* CorrelationEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000A /* CorrelationEngine.swift */; };
 		AA10000000000000000000B /* SeedDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000B /* SeedDataService.swift */; };
 		AA10000000000000000000C /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000C /* NotificationService.swift */; };
+		AA1000000000000000000F0 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000F0 /* LocalizationManager.swift */; };
 		AA10000000000000000000D /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000D /* HomeViewModel.swift */; };
 		AA10000000000000000000E /* LogViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000E /* LogViewModel.swift */; };
 		AA10000000000000000000F /* TrendsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000F /* TrendsViewModel.swift */; };
@@ -42,25 +43,14 @@
 		AA100000000000000000021 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000021 /* OnboardingView.swift */; };
 		AA100000000000000000022 /* EmojiPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000022 /* EmojiPicker.swift */; };
 		AA100000000000000000023 /* CalendarStrip.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000023 /* CalendarStrip.swift */; };
+		AA1000000000000000000F1 /* SkeletonModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000F1 /* SkeletonModifier.swift */; };
 		AA100000000000000000024 /* Date+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000024 /* Date+Helpers.swift */; };
 		AA100000000000000000025 /* Double+Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000025 /* Double+Formatting.swift */; };
 		AA100000000000000000026 /* Color+Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000026 /* Color+Theme.swift */; };
 		AA100000000000000000027 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000027 /* Assets.xcassets */; };
 		AA100000000000000000028 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000028 /* Localizable.strings */; };
-		AA100000000000000000030 /* MCSanteWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000030 /* MCSanteWidget.swift */; };
-		AA100000000000000000031 /* MCSanteWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000031 /* MCSanteWidgetBundle.swift */; };
-		AA100000000000000000032 /* TrackingCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000003 /* TrackingCategory.swift */; };
-		AA100000000000000000033 /* DailyEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000004 /* DailyEntry.swift */; };
-		AA100000000000000000034 /* DailySnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000005 /* DailySnapshot.swift */; };
-		AA100000000000000000035 /* CorrelationResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000006 /* CorrelationResult.swift */; };
-		AA100000000000000000036 /* Double+Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000025 /* Double+Formatting.swift */; };
-		AA100000000000000000037 /* Date+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000024 /* Date+Helpers.swift */; };
-		AA100000000000000000038 /* CorrelationEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000A /* CorrelationEngine.swift */; };
 		AA100000000000000000040 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000040 /* HealthKit.framework */; };
 		AA100000000000000000041 /* WeatherKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000041 /* WeatherKit.framework */; };
-		AA100000000000000000042 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000042 /* WidgetKit.framework */; };
-		AA100000000000000000043 /* AppIntents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000043 /* AppIntents.framework */; };
-		AA100000000000000000050 /* MC-SanteWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = AA000000000000000000051 /* MC-SanteWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		AB100000000000000000001 /* CorrelationEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000001 /* CorrelationEngineTests.swift */; };
 		AB100000000000000000002 /* DoubleFormattingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000002 /* DoubleFormattingTests.swift */; };
 		AB100000000000000000003 /* DateHelpersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000003 /* DateHelpersTests.swift */; };
@@ -69,13 +59,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		AA300000000000000000004 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = AA600000000000000000001 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = AA300000000000000000002;
-			remoteInfo = "MC-SanteWidget";
-		};
 		AB300000000000000000002 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = AA600000000000000000001 /* Project object */;
@@ -92,7 +75,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				AA100000000000000000050 /* MC-SanteWidget.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -112,6 +94,7 @@
 		AA00000000000000000000A /* CorrelationEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorrelationEngine.swift; sourceTree = "<group>"; };
 		AA00000000000000000000B /* SeedDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedDataService.swift; sourceTree = "<group>"; };
 		AA00000000000000000000C /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		AA0000000000000000000F0 /* LocalizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationManager.swift; sourceTree = "<group>"; };
 		AA00000000000000000000D /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		AA00000000000000000000E /* LogViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogViewModel.swift; sourceTree = "<group>"; };
 		AA00000000000000000000F /* TrendsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrendsViewModel.swift; sourceTree = "<group>"; };
@@ -135,6 +118,7 @@
 		AA000000000000000000021 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		AA000000000000000000022 /* EmojiPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiPicker.swift; sourceTree = "<group>"; };
 		AA000000000000000000023 /* CalendarStrip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarStrip.swift; sourceTree = "<group>"; };
+		AA0000000000000000000F1 /* SkeletonModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkeletonModifier.swift; sourceTree = "<group>"; };
 		AA000000000000000000024 /* Date+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Helpers.swift"; sourceTree = "<group>"; };
 		AA000000000000000000025 /* Double+Formatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Double+Formatting.swift"; sourceTree = "<group>"; };
 		AA000000000000000000026 /* Color+Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Theme.swift"; sourceTree = "<group>"; };
@@ -142,16 +126,11 @@
 		AA000000000000000000028 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		AA000000000000000000029 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AA00000000000000000002A /* MC_Sante.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MC_Sante.entitlements; sourceTree = "<group>"; };
-		AA000000000000000000030 /* MCSanteWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCSanteWidget.swift; sourceTree = "<group>"; };
-		AA000000000000000000031 /* MCSanteWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCSanteWidgetBundle.swift; sourceTree = "<group>"; };
-		AA000000000000000000032 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		AA000000000000000000033 /* MC_SanteWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MC_SanteWidget.entitlements; sourceTree = "<group>"; };
 		AA000000000000000000040 /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
 		AA000000000000000000041 /* WeatherKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WeatherKit.framework; path = System/Library/Frameworks/WeatherKit.framework; sourceTree = SDKROOT; };
 		AA000000000000000000042 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		AA000000000000000000043 /* AppIntents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppIntents.framework; path = System/Library/Frameworks/AppIntents.framework; sourceTree = SDKROOT; };
 		AA000000000000000000050 /* MC-Sante.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MC-Sante.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		AA000000000000000000051 /* MC-SanteWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "MC-SanteWidget.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB000000000000000000001 /* CorrelationEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorrelationEngineTests.swift; sourceTree = "<group>"; };
 		AB000000000000000000002 /* DoubleFormattingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoubleFormattingTests.swift; sourceTree = "<group>"; };
 		AB000000000000000000003 /* DateHelpersTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateHelpersTests.swift; sourceTree = "<group>"; };
@@ -170,15 +149,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AA400000000000000000004 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				AA100000000000000000042 /* WidgetKit.framework in Frameworks */,
-				AA100000000000000000043 /* AppIntents.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -186,7 +156,6 @@
 			isa = PBXGroup;
 			children = (
 				AA200000000000000000003 /* MC-Sante */,
-				AA200000000000000000004 /* MC-SanteWidget */,
 				AB200000000000000000001 /* MC-SanteTests */,
 				AA200000000000000000002 /* Frameworks */,
 				AA200000000000000000005 /* Products */,
@@ -222,22 +191,10 @@
 			path = "MC-Sante";
 			sourceTree = "<group>";
 		};
-		AA200000000000000000004 /* MC-SanteWidget */ = {
-			isa = PBXGroup;
-			children = (
-				AA000000000000000000030 /* MCSanteWidget.swift */,
-				AA000000000000000000031 /* MCSanteWidgetBundle.swift */,
-				AA000000000000000000032 /* Info.plist */,
-				AA000000000000000000033 /* MC_SanteWidget.entitlements */,
-			);
-			path = "MC-SanteWidget";
-			sourceTree = "<group>";
-		};
 		AA200000000000000000005 /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				AA000000000000000000050 /* MC-Sante.app */,
-				AA000000000000000000051 /* MC-SanteWidget.appex */,
 				AB000000000000000000050 /* MC-SanteTests.xctest */,
 			);
 			name = Products;
@@ -263,6 +220,7 @@
 				AA00000000000000000000A /* CorrelationEngine.swift */,
 				AA00000000000000000000B /* SeedDataService.swift */,
 				AA00000000000000000000C /* NotificationService.swift */,
+				AA0000000000000000000F0 /* LocalizationManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -358,6 +316,7 @@
 			children = (
 				AA000000000000000000022 /* EmojiPicker.swift */,
 				AA000000000000000000023 /* CalendarStrip.swift */,
+				AA0000000000000000000F1 /* SkeletonModifier.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -389,29 +348,11 @@
 			buildRules = (
 			);
 			dependencies = (
-				AA300000000000000000003 /* PBXTargetDependency */,
 			);
 			name = "MC-Sante";
 			productName = "MC-Sante";
 			productReference = AA000000000000000000050 /* MC-Sante.app */;
 			productType = "com.apple.product-type.application";
-		};
-		AA300000000000000000002 /* MC-SanteWidget */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = AA500000000000000000003 /* Build configuration list for PBXNativeTarget "MC-SanteWidget" */;
-			buildPhases = (
-				AA400000000000000000004 /* Frameworks */,
-				AA400000000000000000005 /* Sources */,
-				AA400000000000000000006 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "MC-SanteWidget";
-			productName = "MC-SanteWidget";
-			productReference = AA000000000000000000051 /* MC-SanteWidget.appex */;
-			productType = "com.apple.product-type.app-extension";
 		};
 		AB300000000000000000001 /* MC-SanteTests */ = {
 			isa = PBXNativeTarget;
@@ -442,9 +383,6 @@
 					AA300000000000000000001 = {
 						CreatedOnToolsVersion = 15.4;
 					};
-					AA300000000000000000002 = {
-						CreatedOnToolsVersion = 15.4;
-					};
 					AB300000000000000000001 = {
 						CreatedOnToolsVersion = 15.4;
 						TestTargetID = AA300000000000000000001;
@@ -465,7 +403,6 @@
 			projectRoot = "";
 			targets = (
 				AA300000000000000000001 /* MC-Sante */,
-				AA300000000000000000002 /* MC-SanteWidget */,
 				AB300000000000000000001 /* MC-SanteTests */,
 			);
 		};
@@ -478,13 +415,6 @@
 			files = (
 				AA100000000000000000027 /* Assets.xcassets in Resources */,
 				AA100000000000000000028 /* Localizable.strings in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		AA400000000000000000006 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -507,6 +437,7 @@
 				AA10000000000000000000A /* CorrelationEngine.swift in Sources */,
 				AA10000000000000000000B /* SeedDataService.swift in Sources */,
 				AA10000000000000000000C /* NotificationService.swift in Sources */,
+				AA1000000000000000000F0 /* LocalizationManager.swift in Sources */,
 				AA10000000000000000000D /* HomeViewModel.swift in Sources */,
 				AA10000000000000000000E /* LogViewModel.swift in Sources */,
 				AA10000000000000000000F /* TrendsViewModel.swift in Sources */,
@@ -530,25 +461,10 @@
 				AA100000000000000000021 /* OnboardingView.swift in Sources */,
 				AA100000000000000000022 /* EmojiPicker.swift in Sources */,
 				AA100000000000000000023 /* CalendarStrip.swift in Sources */,
+				AA1000000000000000000F1 /* SkeletonModifier.swift in Sources */,
 				AA100000000000000000024 /* Date+Helpers.swift in Sources */,
 				AA100000000000000000025 /* Double+Formatting.swift in Sources */,
 				AA100000000000000000026 /* Color+Theme.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		AA400000000000000000005 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				AA100000000000000000030 /* MCSanteWidget.swift in Sources */,
-				AA100000000000000000031 /* MCSanteWidgetBundle.swift in Sources */,
-				AA100000000000000000032 /* TrackingCategory.swift in Sources */,
-				AA100000000000000000033 /* DailyEntry.swift in Sources */,
-				AA100000000000000000034 /* DailySnapshot.swift in Sources */,
-				AA100000000000000000035 /* CorrelationResult.swift in Sources */,
-				AA100000000000000000036 /* Double+Formatting.swift in Sources */,
-				AA100000000000000000037 /* Date+Helpers.swift in Sources */,
-				AA100000000000000000038 /* CorrelationEngine.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -567,11 +483,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		AA300000000000000000003 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = AA300000000000000000002 /* MC-SanteWidget */;
-			targetProxy = AA300000000000000000004 /* PBXContainerItemProxy */;
-		};
 		AB300000000000000000003 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = AA300000000000000000001 /* MC-Sante */;
@@ -755,56 +666,6 @@
 			};
 			name = Release;
 		};
-		AA500000000000000000008 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "MC-SanteWidget/MC_SanteWidget.entitlements";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 76WQGWRA2P;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "MC-SanteWidget/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mcsante.app.widget;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Debug;
-		};
-		AA500000000000000000009 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "MC-SanteWidget/MC_SanteWidget.entitlements";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 76WQGWRA2P;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "MC-SanteWidget/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mcsante.app.widget;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Release;
-		};
 		AB500000000000000000001 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -860,15 +721,6 @@
 			buildConfigurations = (
 				AA500000000000000000006 /* Debug */,
 				AA500000000000000000007 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		AA500000000000000000003 /* Build configuration list for PBXNativeTarget "MC-SanteWidget" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				AA500000000000000000008 /* Debug */,
-				AA500000000000000000009 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

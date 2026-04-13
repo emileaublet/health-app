@@ -10,7 +10,7 @@ struct TrendsView: View {
         NavigationStack {
             Group {
                 if viewModel.isComputing {
-                    ProgressView("Calcul des corrélations…")
+                    ProgressView(L10n.computingCorrelations)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if !viewModel.hasSufficientData {
                     insufficientDataView
@@ -18,7 +18,7 @@ struct TrendsView: View {
                     correlationList
                 }
             }
-            .navigationTitle("Tendances")
+            .navigationTitle(L10n.trendsTitle)
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -53,13 +53,13 @@ struct TrendsView: View {
 
             if viewModel.filteredCorrelations.isEmpty {
                 Section {
-                    Text("Aucune corrélation significative détectée sur cette fenêtre. Continue à logger !")
+                    Text(L10n.noSignificantCorrelation)
                         .font(.callout)
                         .foregroundStyle(.secondary)
                         .padding(.vertical, 8)
                 }
             } else {
-                Section("Corrélations (\(viewModel.filteredCorrelations.count))") {
+                Section(L10n.correlationsCount(viewModel.filteredCorrelations.count)) {
                     ForEach(viewModel.filteredCorrelations) { result in
                         Button {
                             selectedCorrelation = result
@@ -72,7 +72,7 @@ struct TrendsView: View {
             }
 
             Section {
-                Text("⚠️ Ces corrélations sont statistiques et ne prouvent pas de causalité. Elles sont basées sur les données des \(viewModel.selectedWindow) derniers jours. Consultez un professionnel de santé pour toute décision médicale.")
+                Text(L10n.disclaimerTrends(viewModel.selectedWindow))
                     .font(.caption2)
                     .foregroundStyle(.tertiary)
             }
@@ -92,18 +92,18 @@ struct TrendsView: View {
                 .foregroundStyle(.secondary)
 
             VStack(spacing: 8) {
-                Text("En cours d'apprentissage…")
+                Text(L10n.learningInProgress)
                     .font(.title3.weight(.semibold))
-                Text("Il faut au moins 7 jours de données pour calculer les premières corrélations.")
+                Text(L10n.insufficientDataMessage)
                     .font(.callout)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 32)
 
                 if viewModel.daysUntilReady > 0 {
-                    Text("Encore \(viewModel.daysUntilReady) jour\(viewModel.daysUntilReady > 1 ? "s" : "") !")
+                    Text(L10n.daysUntilReady(viewModel.daysUntilReady))
                         .font(.callout.weight(.medium))
-                        .foregroundStyle(.accentColor)
+                        .foregroundStyle(Color.accentColor)
                 }
             }
         }
@@ -122,7 +122,7 @@ struct TrendsView: View {
                     // Chart
                     if let series = viewModel.seriesFor(result: result) {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("Visualisation")
+                            Text(L10n.visualization)
                                 .font(.headline)
                             CorrelationChartView(
                                 result: result,
@@ -144,7 +144,7 @@ struct TrendsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Fermer") { selectedCorrelation = nil }
+                    Button(L10n.close) { selectedCorrelation = nil }
                 }
             }
         }
@@ -153,15 +153,15 @@ struct TrendsView: View {
 
     private func metaSection(_ result: CorrelationResult) -> some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Détails")
+            Text(L10n.details)
                 .font(.headline)
 
-            infoRow("Coefficient r", value: String(format: "%+.4f", result.pearsonR))
-            infoRow("Force", value: result.strength.label)
-            infoRow("Échantillon", value: "\(result.sampleSize) jours")
-            infoRow("Décalage", value: result.lagDays == 0 ? "Même jour" : "\(result.lagDays) j")
-            infoRow("Fenêtre", value: "\(result.windowDays) jours")
-            infoRow("Calculé le", value: result.generatedAt.shortDateString)
+            infoRow(L10n.coefficientR, value: String(format: "%+.4f", result.pearsonR))
+            infoRow(L10n.strengthLabel, value: result.strength.localizedLabel)
+            infoRow(L10n.sample, value: L10n.sampleDays(result.sampleSize))
+            infoRow(L10n.lag, value: result.lagDays == 0 ? L10n.sameDay : L10n.lagDays(result.lagDays))
+            infoRow(L10n.window, value: L10n.windowDays(result.windowDays))
+            infoRow(L10n.computedOn, value: result.generatedAt.shortDateString)
         }
         .padding()
         .background(Color(.secondarySystemBackground))

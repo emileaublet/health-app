@@ -5,60 +5,94 @@ struct HomeView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var viewModel: HomeViewModel
     @State private var showingCelebration = false
+    @Binding var selectedTab: ContentView.Tab
 
-    init(snapshotService: SnapshotService) {
+    init(snapshotService: SnapshotService, selectedTab: Binding<ContentView.Tab>) {
         _viewModel = State(wrappedValue: HomeViewModel(snapshotService: snapshotService))
+        _selectedTab = selectedTab
     }
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                LazyVStack(spacing: 20, pinnedViews: []) {
-                    // Streak banner
-                    if viewModel.currentStreak > 0 {
-                        streakBanner
+            VStack(spacing: 0) {
+                dateNavigator
+                    .padding(.horizontal)
+                    .padding(.vertical, 10)
+                    .background(Color(.systemBackground))
+
+                Divider()
+
+                ScrollView {
+                    if viewModel.isLoading && viewModel.todaySnapshot == nil {
+                        skeletonContent
+                    } else {
+                        dataContent
                     }
-
-                    // Sommeil
-                    sleepSection
-
-                    // Cardiaque
-                    cardiacSection
-
-                    // Activité
-                    activitySection
-
-                    // Météo
-                    weatherSection
-
-                    // Humeur
-                    moodSection
-
-                    // Insight du jour
-                    insightSection
-
-                    // Disclaimer
-                    disclaimerFooter
                 }
-                .padding()
+                .refreshable {
+                    await viewModel.forceRefresh(context: modelContext)
+                }
             }
-            .navigationTitle("Aujourd'hui")
+            .navigationTitle(L10n.tabHome)
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        Task { await viewModel.loadToday(context: modelContext) }
-                    } label: {
-                        Image(systemName: "arrow.clockwise")
+                    HStack(spacing: 12) {
+                        Button {
+                            selectedTab = .log
+                        } label: {
+                            Image(systemName: "pencil.circle.fill")
+                        }
+                        Button {
+                            Task { await viewModel.forceRefresh(context: modelContext) }
+                        } label: {
+                            Image(systemName: "arrow.clockwise")
+                        }
                     }
                 }
             }
-            .refreshable {
-                await viewModel.loadToday(context: modelContext)
-            }
         }
         .task {
-            await viewModel.loadToday(context: modelContext)
+            await viewModel.loadDay(context: modelContext)
+        }
+        .onChange(of: viewModel.selectedDate) { _, _ in
+            Task { await viewModel.loadDay(context: modelContext) }
+        }
+    }
+
+    // MARK: Date navigator
+
+    private var dateNavigator: some View {
+        HStack {
+            Button {
+                viewModel.goToPreviousDay()
+            } label: {
+                Image(systemName: "chevron.left")
+                    .font(.title3.weight(.semibold))
+                    .frame(width: 44, height: 44)
+            }
+
+            Spacer()
+
+            VStack(spacing: 2) {
+                Text(viewModel.dateTitle)
+                    .font(.headline)
+                Text(viewModel.selectedDate.shortDateString)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer()
+
+            Button {
+                viewModel.goToNextDay()
+            } label: {
+                Image(systemName: "chevron.right")
+                    .font(.title3.weight(.semibold))
+                    .frame(width: 44, height: 44)
+            }
+            .opacity(viewModel.canGoForward ? 1 : 0.3)
+            .disabled(!viewModel.canGoForward)
         }
     }
 
@@ -66,7 +100,7 @@ struct HomeView: View {
 
     private var streakBanner: some View {
         HStack {
-            Text("🔥 \(viewModel.currentStreak) jour\(viewModel.currentStreak > 1 ? "s" : "") de suite")
+            Text(L10n.streakDays(viewModel.currentStreak))
                 .font(.callout.weight(.semibold))
             Spacer()
         }
@@ -76,61 +110,112 @@ struct HomeView: View {
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
+    // MARK: Skeleton
+
+    private var skeletonContent: some View {
+        LazyVStack(spacing: 20, pinnedViews: []) {
+            SkeletonSection(icon: "moon.fill", cardCount: 4, columns: 2)
+            SkeletonSection(icon: "heart.fill", cardCount: 2, columns: 2)
+            SkeletonSection(icon: "figure.run", cardCount: 2, columns: 2)
+            SkeletonSection(icon: "cloud.sun.fill", cardCount: 3, columns: 3)
+        }
+        .padding()
+    }
+
+    // MARK: Data content
+
+    private var dataContent: some View {
+        LazyVStack(spacing: 20, pinnedViews: []) {
+            // Streak banner
+            if viewModel.currentStreak > 0 {
+                streakBanner
+            }
+
+            sleepSection
+            cardiacSection
+            activitySection
+            weatherSection
+            moodSection
+            insightSection
+            disclaimerFooter
+        }
+        .padding()
+    }
+
+    // MARK: Bar chart helpers
+
+    private func barData(_ keyPath: KeyPath<DailySnapshot, Double?>) -> [Double] {
+        viewModel.recentSnapshots.map { $0[keyPath: keyPath] ?? 0 }
+    }
+
+    /// Index of the selected day within recentSnapshots (for highlight)
+    private var currentDayBarIndex: Int? {
+        let day = viewModel.selectedDate
+        return viewModel.recentSnapshots.firstIndex { Calendar.current.isDate($0.date, inSameDayAs: day) }
+    }
+
     // MARK: Sommeil
 
     private var sleepSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            sectionHeader("Sommeil", icon: "moon.fill")
+            sectionHeader(L10n.sectionSleep, icon: "moon.fill")
 
             let snap = viewModel.todaySnapshot
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
                 if let hours = snap?.sleepDurationHours {
                     MetricCard(
                         emoji: "😴",
-                        title: "Durée totale",
+                        title: L10n.totalDuration,
                         value: hours.hoursMinutesString,
                         subtitle: nil,
                         accentColor: .sleepColor,
-                        progress: min(hours / 9.0, 1.0)
+                        sparklineData: barData(\.sleepDurationHours),
+                        highlightIndex: currentDayBarIndex
                     )
                 } else {
-                    MetricCardMissing(emoji: "😴", title: "Durée totale")
+                    MetricCardMissing(emoji: "😴", title: L10n.totalDuration)
                 }
 
                 if let rem = snap?.sleepREMMinutes {
                     MetricCard(
                         emoji: "🌙",
-                        title: "Sommeil REM",
-                        value: "\(Int(rem)) min",
+                        title: L10n.remSleep,
+                        value: rem.minutesFormatted,
                         subtitle: nil,
-                        accentColor: .indigo
+                        accentColor: .indigo,
+                        sparklineData: barData(\.sleepREMMinutes),
+                        highlightIndex: currentDayBarIndex
                     )
                 } else {
-                    MetricCardMissing(emoji: "🌙", title: "Sommeil REM")
+                    MetricCardMissing(emoji: "🌙", title: L10n.remSleep)
                 }
 
                 if let deep = snap?.sleepDeepMinutes {
                     MetricCard(
                         emoji: "💤",
-                        title: "Sommeil profond",
-                        value: "\(Int(deep)) min",
+                        title: L10n.deepSleep,
+                        value: deep.minutesFormatted,
                         subtitle: nil,
-                        accentColor: .blue
+                        accentColor: .blue,
+                        sparklineData: barData(\.sleepDeepMinutes),
+                        highlightIndex: currentDayBarIndex
                     )
                 } else {
-                    MetricCardMissing(emoji: "💤", title: "Sommeil profond")
+                    MetricCardMissing(emoji: "💤", title: L10n.deepSleep)
                 }
 
                 if let core = snap?.sleepCoreMinutes {
                     MetricCard(
                         emoji: "🛌",
-                        title: "Sommeil léger",
-                        value: "\(Int(core)) min",
+                        title: L10n.lightSleep,
+                        value: core.minutesFormatted,
                         subtitle: nil,
-                        accentColor: .teal
+                        accentColor: .teal,
+                        sparklineData: barData(\.sleepCoreMinutes),
+                        highlightIndex: currentDayBarIndex
                     )
                 } else {
-                    MetricCardMissing(emoji: "🛌", title: "Sommeil léger")
+                    MetricCardMissing(emoji: "🛌", title: L10n.lightSleep)
                 }
             }
         }
@@ -140,20 +225,22 @@ struct HomeView: View {
 
     private var cardiacSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            sectionHeader("Cardiaque", icon: "heart.fill")
+            sectionHeader(L10n.sectionCardiac, icon: "heart.fill")
 
             let snap = viewModel.todaySnapshot
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
                 if let bpm = snap?.restingHeartRate {
                     MetricCard(
                         emoji: "❤️",
-                        title: "FC repos",
+                        title: L10n.restingHR,
                         value: "\(Int(bpm)) bpm",
                         subtitle: nil,
-                        accentColor: .heartColor
+                        accentColor: .heartColor,
+                        sparklineData: barData(\.restingHeartRate),
+                        highlightIndex: currentDayBarIndex
                     )
                 } else {
-                    MetricCardMissing(emoji: "❤️", title: "FC repos")
+                    MetricCardMissing(emoji: "❤️", title: L10n.restingHR)
                 }
 
                 if let hrv = snap?.hrvSDNN {
@@ -162,7 +249,9 @@ struct HomeView: View {
                         title: "HRV",
                         value: "\(Int(hrv)) ms",
                         subtitle: nil,
-                        accentColor: .pink
+                        accentColor: .pink,
+                        sparklineData: barData(\.hrvSDNN),
+                        highlightIndex: currentDayBarIndex
                     )
                 } else {
                     MetricCardMissing(emoji: "💓", title: "HRV")
@@ -171,38 +260,40 @@ struct HomeView: View {
         }
     }
 
-    // MARK: Activité
+    // MARK: Activite
 
     private var activitySection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            sectionHeader("Activité", icon: "figure.run")
+            sectionHeader(L10n.sectionActivity, icon: "figure.run")
 
             let snap = viewModel.todaySnapshot
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
                 if let cal = snap?.activeCalories {
                     MetricCard(
                         emoji: "🔥",
-                        title: "Calories actives",
+                        title: L10n.activeCalories,
                         value: "\(Int(cal)) kcal",
                         subtitle: nil,
                         accentColor: .activityColor,
-                        progress: min(cal / 500.0, 1.0)
+                        sparklineData: barData(\.activeCalories),
+                        highlightIndex: currentDayBarIndex
                     )
                 } else {
-                    MetricCardMissing(emoji: "🔥", title: "Calories actives")
+                    MetricCardMissing(emoji: "🔥", title: L10n.activeCalories)
                 }
 
-                if let min = snap?.exerciseMinutes {
+                if let exerciseMins = snap?.exerciseMinutes {
                     MetricCard(
                         emoji: "🏃",
-                        title: "Exercice",
-                        value: "\(Int(min)) min",
+                        title: L10n.exercise,
+                        value: exerciseMins.minutesFormatted,
                         subtitle: nil,
                         accentColor: .green,
-                        progress: min / 60.0
+                        sparklineData: barData(\.exerciseMinutes),
+                        highlightIndex: currentDayBarIndex
                     )
                 } else {
-                    MetricCardMissing(emoji: "🏃", title: "Exercice")
+                    MetricCardMissing(emoji: "🏃", title: L10n.exercise)
                 }
             }
         }
@@ -212,44 +303,50 @@ struct HomeView: View {
 
     private var weatherSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            sectionHeader("Environnement", icon: "cloud.sun.fill")
+            sectionHeader(L10n.sectionEnvironment, icon: "cloud.sun.fill")
 
             let snap = viewModel.todaySnapshot
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
                 if let temp = snap?.temperatureCelsius {
                     MetricCard(
                         emoji: "🌡️",
-                        title: "Température",
+                        title: L10n.temperature,
                         value: "\(temp.oneDecimal) °C",
                         subtitle: nil,
-                        accentColor: .weatherColor
+                        accentColor: .weatherColor,
+                        sparklineData: barData(\.temperatureCelsius),
+                        highlightIndex: currentDayBarIndex
                     )
                 } else {
-                    MetricCardMissing(emoji: "🌡️", title: "Température")
+                    MetricCardMissing(emoji: "🌡️", title: L10n.temperature)
                 }
 
                 if let pressure = snap?.pressureHPa {
                     MetricCard(
                         emoji: "📊",
-                        title: "Pression",
+                        title: L10n.pressure,
                         value: "\(Int(pressure)) hPa",
                         subtitle: nil,
-                        accentColor: .cyan
+                        accentColor: .cyan,
+                        sparklineData: barData(\.pressureHPa),
+                        highlightIndex: currentDayBarIndex
                     )
                 } else {
-                    MetricCardMissing(emoji: "📊", title: "Pression")
+                    MetricCardMissing(emoji: "📊", title: L10n.pressure)
                 }
 
                 if let humidity = snap?.humidityPercent {
                     MetricCard(
                         emoji: "💧",
-                        title: "Humidité",
+                        title: L10n.humidity,
                         value: "\(Int(humidity)) %",
                         subtitle: nil,
-                        accentColor: .blue
+                        accentColor: .blue,
+                        sparklineData: barData(\.humidityPercent),
+                        highlightIndex: currentDayBarIndex
                     )
                 } else {
-                    MetricCardMissing(emoji: "💧", title: "Humidité")
+                    MetricCardMissing(emoji: "💧", title: L10n.humidity)
                 }
             }
         }
@@ -261,14 +358,15 @@ struct HomeView: View {
         Group {
             if let valence = viewModel.todaySnapshot?.moodValence {
                 VStack(alignment: .leading, spacing: 10) {
-                    sectionHeader("Humeur", icon: "brain.head.profile")
+                    sectionHeader(L10n.sectionMood, icon: "brain.head.profile")
                     MetricCard(
                         emoji: "🧠",
-                        title: "Valence",
+                        title: L10n.valence,
                         value: moodLabel(valence),
-                        subtitle: String(format: "Score : %+.2f", valence),
+                        subtitle: L10n.scoreLabel(valence),
                         accentColor: .moodColor,
-                        progress: (valence + 1.0) / 2.0
+                        sparklineData: barData(\.moodValence),
+                        highlightIndex: currentDayBarIndex
                     )
                 }
             }
@@ -279,7 +377,7 @@ struct HomeView: View {
 
     private var insightSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            sectionHeader("Corrélation du jour", icon: "sparkles")
+            sectionHeader(L10n.sectionDailyCorrelation, icon: "sparkles")
 
             if let insight = viewModel.topInsight {
                 InsightCard(insight: insight)
@@ -295,9 +393,9 @@ struct HomeView: View {
                 .font(.title2)
                 .foregroundStyle(.secondary)
             VStack(alignment: .leading, spacing: 2) {
-                Text("Continue à logger tes données")
+                Text(L10n.keepLogging)
                     .font(.callout.weight(.medium))
-                Text("Encore \(viewModel.daysUntilFirstInsight) jour\(viewModel.daysUntilFirstInsight > 1 ? "s" : "") pour les premières corrélations.")
+                Text(L10n.daysUntilCorrelations(viewModel.daysUntilFirstInsight))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -311,7 +409,7 @@ struct HomeView: View {
     // MARK: Disclaimer
 
     private var disclaimerFooter: some View {
-        Text("⚠️ Ces données sont indicatives. Elles ne remplacent pas un avis médical professionnel.")
+        Text(L10n.disclaimerHome)
             .font(.caption2)
             .foregroundStyle(.tertiary)
             .multilineTextAlignment(.center)
@@ -327,12 +425,10 @@ struct HomeView: View {
     }
 
     private func moodLabel(_ valence: Double) -> String {
-        switch valence {
-        case 0.6...:   return "Très positif"
-        case 0.2...:   return "Positif"
-        case -0.2...:  return "Neutre"
-        case -0.6...:  return "Négatif"
-        default:       return "Très négatif"
-        }
+        if valence >= 0.6 { return L10n.moodVeryPositive }
+        if valence >= 0.2 { return L10n.moodPositive }
+        if valence >= -0.2 { return L10n.moodNeutral }
+        if valence >= -0.6 { return L10n.moodNegative }
+        return L10n.moodVeryNegative
     }
 }

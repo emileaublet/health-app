@@ -7,10 +7,10 @@ struct BooleanToggle: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            ToggleChip(label: "Non", isSelected: !isOn) {
+            ToggleChip(label: L10n.no, isSelected: !isOn) {
                 value = 0
             }
-            ToggleChip(label: "Oui", isSelected: isOn) {
+            ToggleChip(label: L10n.yes, isSelected: isOn) {
                 value = 1
             }
         }
@@ -27,13 +27,14 @@ private struct ToggleChip: View {
             action()
         }) {
             Text(label)
-                .font(.callout.weight(isSelected ? .semibold : .regular))
+                .font(.callout.weight(isSelected ? .semibold : .medium))
                 .padding(.horizontal, 20)
                 .padding(.vertical, 8)
-                .foregroundStyle(isSelected ? .white : .primary)
-                .background(isSelected ? Color.accentColor : Color(.secondarySystemBackground))
+                .foregroundColor(isSelected ? .white : Color(.label))
+                .background(isSelected ? Color.accentColor : Color(.systemGray3))
                 .clipShape(Capsule())
         }
+        .buttonStyle(.plain)
         .sensoryFeedback(.selection, trigger: isSelected)
         .animation(.spring(response: 0.25), value: isSelected)
     }

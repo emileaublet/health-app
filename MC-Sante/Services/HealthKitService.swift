@@ -40,30 +40,52 @@ final class HealthKitService {
     private(set) var isAuthorized = false
     private(set) var authorizationError: Error?
 
+    private static let typesToRead: Set<HKObjectType> = [
+        HKCategoryType(.sleepAnalysis),
+        HKQuantityType(.heartRate),
+        HKQuantityType(.restingHeartRate),
+        HKQuantityType(.heartRateVariabilitySDNN),
+        HKQuantityType(.activeEnergyBurned),
+        HKQuantityType(.appleExerciseTime),
+        HKCategoryType(.menstrualFlow),
+        HKQuantityType(.bloodPressureSystolic),
+        HKQuantityType(.bloodPressureDiastolic),
+    ]
+
+    private static let typesToWrite: Set<HKSampleType> = [
+        HKObjectType.stateOfMindType(),
+    ]
+
     // MARK: Authorization
 
+    /// Check existing authorization status without prompting the user.
+    func checkAuthorizationStatus() {
+        guard HKHealthStore.isHealthDataAvailable() else {
+            isAuthorized = false
+            return
+        }
+        // HealthKit doesn't expose a single "all authorized" check for read types
+        // (read status is always .sharingDenied to protect privacy).
+        // Check write authorization for State of Mind as a proxy — if the user
+        // has gone through the authorization flow, this will be .authorized.
+        let writeStatus = healthStore.authorizationStatus(for: HKObjectType.stateOfMindType())
+        isAuthorized = writeStatus == .sharingAuthorized
+    }
+
     func requestAuthorization() async {
-        guard HKHealthStore.isHealthDataAvailable() else { return }
-
-        let typesToRead: Set<HKObjectType> = [
-            HKCategoryType(.sleepAnalysis),
-            HKQuantityType(.heartRate),
-            HKQuantityType(.restingHeartRate),
-            HKQuantityType(.heartRateVariabilitySDNN),
-            HKQuantityType(.activeEnergyBurned),
-            HKQuantityType(.appleExerciseTime),
-            HKCategoryType(.menstrualFlow),
-            HKCorrelationType(.bloodPressure),
-            HKStateOfMind.self,
-        ]
-
-        let typesToWrite: Set<HKSampleType> = [
-            HKStateOfMind.self,
-        ]
+        guard HKHealthStore.isHealthDataAvailable() else {
+            await MainActor.run {
+                authorizationError = HKError(.errorHealthDataUnavailable)
+                isAuthorized = false
+            }
+            return
+        }
 
         do {
-            try await healthStore.requestAuthorization(toShare: typesToWrite, read: typesToRead)
-            await MainActor.run { isAuthorized = true }
+            try await healthStore.requestAuthorization(toShare: Self.typesToWrite, read: Self.typesToRead)
+            await MainActor.run {
+                checkAuthorizationStatus()
+            }
         } catch {
             await MainActor.run {
                 authorizationError = error
@@ -175,27 +197,37 @@ final class HealthKitService {
     func fetchBloodPressure(for date: Date) async -> BloodPressureData? {
         let correlationType = HKCorrelationType(.bloodPressure)
         let predicate = dayPredicate(for: date)
-        let descriptor = HKCorrelationQueryDescriptor(
-            correlationPredicates: [.correlation(type: correlationType, predicate: predicate)],
-            sortDescriptors: [SortDescriptor(\.endDate, order: .reverse)],
-            limit: 1
-        )
-        guard let results = try? await descriptor.result(for: healthStore),
-              let correlation = results.first else { return nil }
 
-        let systolicType = HKQuantityType(.bloodPressureSystolic)
-        let diastolicType = HKQuantityType(.bloodPressureDiastolic)
-        let unit = HKUnit.millimeterOfMercury()
+        return await withCheckedContinuation { continuation in
+            let query = HKCorrelationQuery(
+                type: correlationType,
+                predicate: predicate,
+                samplePredicates: nil
+            ) { _, results, _ in
+                guard let correlation = results?.first else {
+                    continuation.resume(returning: nil)
+                    return
+                }
 
-        let systolic = correlation.objects(for: systolicType)
-            .compactMap { ($0 as? HKQuantitySample)?.quantity.doubleValue(for: unit) }
-            .first
-        let diastolic = correlation.objects(for: diastolicType)
-            .compactMap { ($0 as? HKQuantitySample)?.quantity.doubleValue(for: unit) }
-            .first
+                let systolicType = HKQuantityType(.bloodPressureSystolic)
+                let diastolicType = HKQuantityType(.bloodPressureDiastolic)
+                let unit = HKUnit.millimeterOfMercury()
 
-        guard let s = systolic, let d = diastolic else { return nil }
-        return BloodPressureData(systolic: s, diastolic: d)
+                let systolic = correlation.objects(for: systolicType)
+                    .compactMap { ($0 as? HKQuantitySample)?.quantity.doubleValue(for: unit) }
+                    .first
+                let diastolic = correlation.objects(for: diastolicType)
+                    .compactMap { ($0 as? HKQuantitySample)?.quantity.doubleValue(for: unit) }
+                    .first
+
+                guard let s = systolic, let d = diastolic else {
+                    continuation.resume(returning: nil)
+                    return
+                }
+                continuation.resume(returning: BloodPressureData(systolic: s, diastolic: d))
+            }
+            healthStore.execute(query)
+        }
     }
 
     // MARK: State of Mind (iOS 18+)
@@ -225,8 +257,8 @@ final class HealthKitService {
             date: date,
             kind: kind,
             valence: valence,
-            associations: [],
-            labels: []
+            labels: [],
+            associations: []
         )
         try await healthStore.save(sample)
     }

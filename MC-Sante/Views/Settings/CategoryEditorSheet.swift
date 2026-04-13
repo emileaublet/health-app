@@ -17,7 +17,7 @@ struct CategoryEditorSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Nom et icône") {
+                Section(L10n.nameAndIcon) {
                     HStack {
                         Button {
                             showingEmojiPicker = true
@@ -28,12 +28,12 @@ struct CategoryEditorSheet: View {
                                 .background(Color(.secondarySystemBackground))
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
                         }
-                        TextField("Nom de la catégorie", text: $name)
+                        TextField(L10n.categoryNamePlaceholder, text: $name)
                             .font(.body)
                     }
                 }
 
-                Section("Type de donnée") {
+                Section(L10n.dataTypeSection) {
                     Picker("Type", selection: $dataType) {
                         ForEach(MetricDataType.allCases, id: \.self) { type in
                             Label(type.label, systemImage: typeIcon(type))
@@ -54,19 +54,19 @@ struct CategoryEditorSheet: View {
                             }
                             dismiss()
                         } label: {
-                            Label("Archiver cette catégorie", systemImage: "archivebox")
+                            Label(L10n.archiveCategory, systemImage: "archivebox")
                         }
                     }
                 }
             }
-            .navigationTitle(isEditing ? "Modifier" : "Nouvelle catégorie")
+            .navigationTitle(isEditing ? L10n.editCategory : L10n.newCategory)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Annuler") { dismiss() }
+                    Button(L10n.cancel) { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button(isEditing ? "Modifier" : "Créer") {
+                    Button(isEditing ? L10n.editCategory : L10n.create) {
                         if isEditing, let cat = existing {
                             cat.name = name
                             cat.emoji = emoji
@@ -102,13 +102,13 @@ struct CategoryEditorSheet: View {
     private var typeHint: some View {
         switch dataType {
         case .counter:
-            Text("Ex : 2 cafés, 3 verres d'eau…")
+            Text(L10n.hintCounter)
                 .font(.caption).foregroundStyle(.secondary)
         case .boolean:
-            Text("Ex : A mangé du gluten ? Oui / Non")
+            Text(L10n.hintBoolean)
                 .font(.caption).foregroundStyle(.secondary)
         case .scale:
-            Text("Ex : Stress de 1 (très bas) à 5 (très élevé)")
+            Text(L10n.hintScale)
                 .font(.caption).foregroundStyle(.secondary)
         }
     }

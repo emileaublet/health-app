@@ -5,9 +5,9 @@ struct TimeWindowPicker: View {
     let options: [Int] = [7, 14, 30]
 
     var body: some View {
-        Picker("Fenêtre", selection: $selectedDays) {
+        Picker(L10n.windowPickerLabel, selection: $selectedDays) {
             ForEach(options, id: \.self) { days in
-                Text("\(days) j").tag(days)
+                Text(L10n.daysSuffix(days)).tag(days)
             }
         }
         .pickerStyle(.segmented)

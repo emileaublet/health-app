@@ -2,17 +2,15 @@ import SwiftUI
 
 struct DayNoteField: View {
     @Binding var text: String
-    var placeholder = "Note libre pour cette journée…"
-
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Label("Note du jour", systemImage: "square.and.pencil")
+            Label(L10n.dayNote, systemImage: "square.and.pencil")
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(.secondary)
 
             ZStack(alignment: .topLeading) {
                 if text.isEmpty {
-                    Text(placeholder)
+                    Text(L10n.dayNotePlaceholder)
                         .foregroundStyle(.tertiary)
                         .font(.callout)
                         .padding(.horizontal, 4)

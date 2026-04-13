@@ -15,6 +15,7 @@ struct SettingsView: View {
 
     @State private var showingExportSheet = false
     @State private var exportURL: URL?
+    @State private var showingDeleteConfirmation = false
 
     init(
         notificationService: NotificationService,
@@ -30,11 +31,11 @@ struct SettingsView: View {
         NavigationStack {
             List {
                 // MARK: Catégories
-                Section("Suivi") {
+                Section(L10n.sectionTracking) {
                     NavigationLink {
                         CategoryListView()
                     } label: {
-                        Label("Catégories actives", systemImage: "list.bullet")
+                        Label(L10n.activeCategories, systemImage: "list.bullet")
                     }
 
                     if !archivedCategories.isEmpty {
@@ -42,7 +43,7 @@ struct SettingsView: View {
                             archivedCategoriesView
                         } label: {
                             Label(
-                                "Catégories archivées (\(archivedCategories.count))",
+                                L10n.archivedCategoriesCount(archivedCategories.count),
                                 systemImage: "archivebox"
                             )
                         }
@@ -50,24 +51,24 @@ struct SettingsView: View {
                 }
 
                 // MARK: Sources
-                Section("Sources de données") {
+                Section(L10n.sectionDataSources) {
                     NavigationLink {
                         DataSourcesView(healthKit: healthKit, weather: weather)
                     } label: {
-                        Label("HealthKit & Météo", systemImage: "iphone.and.arrow.forward.outward")
+                        Label(L10n.healthKitWeather, systemImage: "iphone.and.arrow.forward.outward")
                     }
                 }
 
                 // MARK: Rappel
-                Section("Rappel quotidien") {
-                    Toggle("Activer le rappel", isOn: $viewModel.reminderEnabled)
+                Section(L10n.sectionDailyReminder) {
+                    Toggle(L10n.enableReminder, isOn: $viewModel.reminderEnabled)
                         .onChange(of: viewModel.reminderEnabled) { _, _ in
                             Task { await viewModel.applyReminderSettings() }
                         }
 
                     if viewModel.reminderEnabled {
                         DatePicker(
-                            "Heure",
+                            L10n.reminderTime,
                             selection: reminderDateBinding,
                             displayedComponents: .hourAndMinute
                         )
@@ -77,32 +78,60 @@ struct SettingsView: View {
                     }
                 }
 
-                // MARK: Export
-                Section("Données") {
+                // MARK: Langue
+                Section(L10n.sectionLanguage) {
+                    Picker(L10n.sectionLanguage, selection: Binding(
+                        get: { LocalizationManager.shared.language },
+                        set: { LocalizationManager.shared.language = $0 }
+                    )) {
+                        ForEach(AppLanguage.allCases) { lang in
+                            Text(lang.displayName).tag(lang)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                }
+
+                // MARK: Export & Data
+                Section(L10n.sectionData) {
                     Button {
                         exportURL = viewModel.exportCSV(context: modelContext)
                         if exportURL != nil { showingExportSheet = true }
                     } label: {
-                        Label("Exporter en CSV", systemImage: "square.and.arrow.up")
+                        Label(L10n.exportCSV, systemImage: "square.and.arrow.up")
                     }
-                    .foregroundStyle(.accentColor)
+                    .foregroundStyle(Color.accentColor)
+
+                    Button(role: .destructive) {
+                        showingDeleteConfirmation = true
+                    } label: {
+                        Label(L10n.removeAllData, systemImage: "trash")
+                            .foregroundStyle(.red)
+                    }
                 }
 
                 // MARK: À propos
-                Section("À propos") {
-                    LabeledContent("Version", value: appVersion)
-                    LabeledContent("Build", value: buildNumber)
-                    Text("Développé pour Marie-Claude. Aucune donnée envoyée en dehors de l'appareil.")
+                Section(L10n.sectionAbout) {
+                    LabeledContent(L10n.version, value: appVersion)
+                    LabeledContent(L10n.build, value: buildNumber)
+                    Text(L10n.aboutDescription)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
             }
-            .navigationTitle("Réglages")
+            .navigationTitle(L10n.settingsTitle)
             .navigationBarTitleDisplayMode(.large)
             .sheet(isPresented: $showingExportSheet) {
                 if let url = exportURL {
                     ShareSheet(activityItems: [url])
                 }
+            }
+            .alert(L10n.removeAllDataConfirmTitle, isPresented: $showingDeleteConfirmation) {
+                Button(L10n.delete, role: .destructive) {
+                    deleteAllData()
+                }
+                Button(L10n.cancel, role: .cancel) {}
+            } message: {
+                Text(L10n.removeAllDataConfirmMessage)
             }
         }
         .onAppear {
@@ -119,15 +148,15 @@ struct SettingsView: View {
                     Text(category.emoji)
                     Text(category.name)
                     Spacer()
-                    Button("Réactiver") {
+                    Button(L10n.reactivate) {
                         viewModel.reactivate(category)
                     }
                     .buttonStyle(.borderless)
-                    .foregroundStyle(.accentColor)
+                    .foregroundStyle(Color.accentColor)
                 }
             }
         }
-        .navigationTitle("Archives")
+        .navigationTitle(L10n.archives)
         .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -149,6 +178,20 @@ struct SettingsView: View {
                 viewModel.reminderMinute = components.minute ?? 0
             }
         )
+    }
+
+    private func deleteAllData() {
+        do {
+            try modelContext.delete(model: DailySnapshot.self)
+            try modelContext.delete(model: DailyEntry.self)
+            try modelContext.delete(model: CorrelationResult.self)
+            try modelContext.delete(model: TrackingCategory.self)
+            try modelContext.save()
+            // Re-seed built-in categories
+            SeedDataService.seedIfNeeded(context: modelContext)
+        } catch {
+            // Silently fail — non-fatal
+        }
     }
 
     private var appVersion: String {

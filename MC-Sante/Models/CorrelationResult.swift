@@ -16,6 +16,14 @@ enum CorrelationStrength: String, Codable {
         }
     }
 
+    var localizedLabel: String {
+        switch self {
+        case .weak:     return L10n.strengthWeak
+        case .moderate: return L10n.strengthModerate
+        case .strong:   return L10n.strengthStrong
+        }
+    }
+
     var colorName: String {
         switch self {
         case .weak:     return "CorrelationWeak"

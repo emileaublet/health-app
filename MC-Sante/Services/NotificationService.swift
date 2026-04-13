@@ -32,8 +32,8 @@ final class NotificationService {
         center.removePendingNotificationRequests(withIdentifiers: ["mc.sante.daily"])
 
         let content = UNMutableNotificationContent()
-        content.title = "MC Santé"
-        content.body = "Comment s'est passée ta journée ? 30 secondes pour logger."
+        content.title = L10n.notificationTitle
+        content.body = L10n.notificationBody
         content.sound = .default
 
         var components = DateComponents()

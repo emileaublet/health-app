@@ -30,13 +30,13 @@ struct CategoryListView: View {
                     }
                 }
             } header: {
-                Text("Actives (\(activeCategories.count) / 15)")
+                Text(L10n.activeCategoriesCount(activeCategories.count))
             } footer: {
-                Text("Glissez pour réordonner. Balayez à gauche pour archiver.")
+                Text(L10n.reorderHint)
                     .font(.caption2)
             }
         }
-        .navigationTitle("Catégories")
+        .navigationTitle(L10n.categoriesTitle)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
