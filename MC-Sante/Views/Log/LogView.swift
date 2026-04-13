@@ -139,13 +139,21 @@ private struct CategoryRow: View {
                         .font(.callout.monospacedDigit())
                         .foregroundStyle(value > 0 ? .primary : .tertiary)
                 }
+                if value > 0 {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundStyle(.green)
+                        .font(.callout)
+                        .transition(.scale.combined(with: .opacity))
+                }
             }
 
             inputControl
         }
         .padding(14)
-        .background(Color(.secondarySystemBackground))
+        .background(value > 0 ? Color.accentColor.opacity(0.08) : Color(.secondarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 14))
+        .overlay(RoundedRectangle(cornerRadius: 14).stroke(value > 0 ? Color.accentColor.opacity(0.3) : Color.clear, lineWidth: 1.5))
+        .animation(.easeInOut(duration: 0.2), value: value > 0)
         .animation(.easeInOut(duration: 0.15), value: value)
     }
 

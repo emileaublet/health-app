@@ -12,17 +12,20 @@ struct CounterInput: View {
                     value -= 1
                 }
             } label: {
-                Image(systemName: "minus.circle.fill")
-                    .font(.title2)
+                Image(systemName: "minus")
+                    .font(.title3.weight(.semibold))
                     .foregroundStyle(value > minimum ? Color.accentColor : Color.secondary)
+                    .frame(width: 44, height: 44)
+                    .background(Circle().fill(Color(.tertiarySystemBackground)))
             }
             .sensoryFeedback(.impact(weight: .light), trigger: value)
             .disabled(value <= minimum)
 
             Text("\(Int(value))")
-                .font(.title2.weight(.semibold))
+                .font(.title2.weight(.bold))
                 .monospacedDigit()
                 .frame(minWidth: 32)
+                .foregroundStyle(value > 0 ? AnyShapeStyle(.primary) : AnyShapeStyle(.tertiary))
                 .contentTransition(.numericText())
                 .animation(.spring(response: 0.3), value: value)
 
@@ -31,11 +34,13 @@ struct CounterInput: View {
                     value += 1
                 }
             } label: {
-                Image(systemName: "plus.circle.fill")
-                    .font(.title2)
+                Image(systemName: "plus")
+                    .font(.title3.weight(.semibold))
                     .foregroundStyle(value < maximum ? Color.accentColor : Color.secondary)
+                    .frame(width: 44, height: 44)
+                    .background(Circle().fill(Color(.tertiarySystemBackground)))
             }
-            .sensoryFeedback(.impact(weight: .light), trigger: value)
+            .sensoryFeedback(.increase, trigger: value)
             .disabled(value >= maximum)
         }
     }

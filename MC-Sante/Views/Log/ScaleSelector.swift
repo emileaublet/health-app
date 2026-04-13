@@ -30,8 +30,8 @@ private struct ScaleCircle: View {
         }) {
             ZStack {
                 Circle()
-                    .fill(isSelected ? fillColor : Color(.systemGray3))
-                    .frame(width: 40, height: 40)
+                    .fill(isSelected ? fillColor : Color(.tertiarySystemBackground))
+                    .frame(width: 44, height: 44)
 
                 Text("\(level)")
                     .font(.callout.weight(isSelected ? .bold : .regular))

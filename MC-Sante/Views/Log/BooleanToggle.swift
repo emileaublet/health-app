@@ -7,10 +7,10 @@ struct BooleanToggle: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            ToggleChip(label: L10n.no, isSelected: !isOn) {
+            ToggleChip(label: L10n.no, isSelected: !isOn, isAffirmative: false) {
                 value = 0
             }
-            ToggleChip(label: L10n.yes, isSelected: isOn) {
+            ToggleChip(label: L10n.yes, isSelected: isOn, isAffirmative: true) {
                 value = 1
             }
         }
@@ -20,6 +20,7 @@ struct BooleanToggle: View {
 private struct ToggleChip: View {
     let label: String
     let isSelected: Bool
+    let isAffirmative: Bool
     let action: () -> Void
 
     var body: some View {
@@ -28,11 +29,15 @@ private struct ToggleChip: View {
         }) {
             Text(label)
                 .font(.callout.weight(isSelected ? .semibold : .medium))
-                .padding(.horizontal, 20)
-                .padding(.vertical, 8)
+                .padding(.vertical, 10)
+                .frame(maxWidth: .infinity)
                 .foregroundColor(isSelected ? .white : Color(.label))
-                .background(isSelected ? Color.accentColor : Color(.systemGray3))
-                .clipShape(Capsule())
+                .background(
+                    isSelected
+                        ? (isAffirmative ? Color.green : Color.red)
+                        : Color(.tertiarySystemBackground)
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 10))
         }
         .buttonStyle(.plain)
         .sensoryFeedback(.selection, trigger: isSelected)
