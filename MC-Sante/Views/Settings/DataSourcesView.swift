@@ -1,5 +1,7 @@
 import SwiftUI
 
+private let appleHealthSourcesURL = URL(string: "x-apple-health://Sources/")
+
 struct DataSourcesView: View {
     let healthKit: HealthKitService
     let weather: WeatherDataService
@@ -23,12 +25,24 @@ struct DataSourcesView: View {
 
                 if healthKit.isAuthorized {
                     Button {
+                        Task { await healthKit.requestAuthorization() }
+                        if let url = appleHealthSourcesURL {
+                            UIApplication.shared.open(url)
+                        }
+                    } label: {
+                        Label(L10n.updatePermissions, systemImage: "lock.open.fill")
+                    }
+                    .buttonStyle(.borderless)
+                    .foregroundStyle(Color.accentColor)
+
+                    Button {
                         if let url = URL(string: "x-apple-health://") {
                             UIApplication.shared.open(url)
                         }
                     } label: {
-                        Label(L10n.updatePermissions, systemImage: "arrow.up.forward.app")
+                        Label(L10n.openAppleHealth, systemImage: "arrow.up.forward.app")
                     }
+                    .buttonStyle(.borderless)
                     .foregroundStyle(Color.accentColor)
                 } else {
                     Button {
@@ -36,6 +50,7 @@ struct DataSourcesView: View {
                     } label: {
                         Label(L10n.authorizeAccess, systemImage: "lock.open.fill")
                     }
+                    .buttonStyle(.borderless)
                     .foregroundStyle(Color.accentColor)
                 }
             }
@@ -55,6 +70,7 @@ struct DataSourcesView: View {
                 } label: {
                     Label(L10n.authorizeLocation, systemImage: "location.fill")
                 }
+                .buttonStyle(.borderless)
                 .foregroundStyle(Color.accentColor)
                 .disabled(weather.locationAuthStatus == .authorizedWhenInUse)
 

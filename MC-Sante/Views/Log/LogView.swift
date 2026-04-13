@@ -114,7 +114,6 @@ struct LogView: View {
                             .frame(width: 48)
                         }
                         .buttonStyle(.plain)
-                        .sensoryFeedback(.selection, trigger: isSelected)
                         .id(day)
                     }
                 }

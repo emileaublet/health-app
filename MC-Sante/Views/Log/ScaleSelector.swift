@@ -3,49 +3,50 @@ import SwiftUI
 struct ScaleSelector: View {
     @Binding var value: Double   // 0 = non renseigné, 1-5
 
-    private let levels = 1...5
-
     var body: some View {
-        HStack(spacing: 8) {
-            ForEach(levels, id: \.self) { level in
-                ScaleCircle(
-                    level: level,
-                    isSelected: Int(value) == level
-                ) {
-                    value = value == Double(level) ? 0 : Double(level)
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 12) {
+                Text("1")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+
+                Slider(
+                    value: Binding(
+                        get: { value == 0 ? 3 : value },
+                        set: { value = min(max($0.rounded(), 1), 5) }
+                    ),
+                    in: 1...5,
+                    step: 1
+                )
+                .tint(sliderColor)
+
+                Text("5")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+
+                Button {
+                    value = 0
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.title3)
+                        .foregroundStyle(value == 0 ? .tertiary : .secondary)
                 }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Clear value")
+                .disabled(value == 0)
+            }
+
+            HStack {
+                Text(value == 0 ? "—" : "\(Int(value))")
+                    .font(.caption.monospacedDigit().weight(.semibold))
+                    .foregroundStyle(value == 0 ? .secondary : .primary)
+                Spacer()
             }
         }
-    }
-}
-
-private struct ScaleCircle: View {
-    let level: Int
-    let isSelected: Bool
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: {
-            action()
-        }) {
-            ZStack {
-                Circle()
-                    .fill(isSelected ? fillColor : Color(.tertiarySystemBackground))
-                    .frame(width: 44, height: 44)
-
-                Text("\(level)")
-                    .font(.callout.weight(isSelected ? .bold : .regular))
-                    .foregroundColor(isSelected ? .white : Color(.label))
-            }
-        }
-        .buttonStyle(.plain)
-        .sensoryFeedback(.selection, trigger: isSelected)
-        .scaleEffect(isSelected ? 1.1 : 1.0)
-        .animation(.spring(response: 0.25, dampingFraction: 0.6), value: isSelected)
     }
 
     private var fillColor: Color {
-        switch level {
+        switch Int(value == 0 ? 3 : value) {
         case 1: return .red.opacity(0.8)
         case 2: return .orange.opacity(0.8)
         case 3: return .yellow.opacity(0.8)
@@ -53,5 +54,9 @@ private struct ScaleCircle: View {
         case 5: return .green
         default: return .accentColor
         }
+    }
+
+    private var sliderColor: Color {
+        value == 0 ? .accentColor : fillColor
     }
 }

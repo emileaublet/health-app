@@ -82,6 +82,8 @@ enum L10n {
     static var restingHR: String { lang == .french ? "FC repos" : "Resting HR" }
     static var activeCalories: String { lang == .french ? "Calories actives" : "Active Calories" }
     static var exercise: String { lang == .french ? "Exercice" : "Exercise" }
+    static var steps: String { lang == .french ? "Pas" : "Steps" }
+    static var distance: String { lang == .french ? "Distance" : "Distance" }
     static var temperature: String { lang == .french ? "Température" : "Temperature" }
     static var pressure: String { lang == .french ? "Pression" : "Pressure" }
     static var humidity: String { lang == .french ? "Humidité" : "Humidity" }
@@ -197,6 +199,7 @@ enum L10n {
     static var notAuthorized: String { lang == .french ? "Non autorisé" : "Not authorized" }
     static var updatePermissions: String { lang == .french ? "Mettre à jour les permissions" : "Update permissions" }
     static var authorizeAccess: String { lang == .french ? "Autoriser l'accès" : "Authorize access" }
+    static var openAppleHealth: String { lang == .french ? "Ouvrir Santé" : "Open Apple Health" }
     static var weatherSection: String { lang == .french ? "Météo" : "Weather" }
     static var authorizeLocation: String { lang == .french ? "Autoriser la localisation" : "Authorize location" }
     static var latestWeatherData: String { lang == .french ? "Dernières données météo :" : "Latest weather data:" }

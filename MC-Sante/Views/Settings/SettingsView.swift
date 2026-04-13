@@ -75,22 +75,22 @@ struct SettingsView: View {
                 // MARK: Sections affichées
                 Section(L10n.sectionDisplayed) {
                     Toggle(isOn: $showSleep) {
-                        Label("😴  \(L10n.sectionSleep)", systemImage: "moon.fill")
+                        Label(L10n.sectionSleep, systemImage: "moon.fill")
                     }
                     Toggle(isOn: $showCardiac) {
-                        Label("❤️  \(L10n.sectionCardiac)", systemImage: "heart.fill")
+                        Label(L10n.sectionCardiac, systemImage: "heart.fill")
                     }
                     Toggle(isOn: $showActivity) {
-                        Label("🏃  \(L10n.sectionActivity)", systemImage: "figure.run")
+                        Label(L10n.sectionActivity, systemImage: "figure.run")
                     }
                     Toggle(isOn: $showCycle) {
-                        Label("🩸  \(L10n.sectionCycle)", systemImage: "drop.fill")
+                        Label(L10n.sectionCycle, systemImage: "drop.fill")
                     }
                     Toggle(isOn: $showWeather) {
-                        Label("🌡️  \(L10n.sectionEnvironment)", systemImage: "cloud.sun.fill")
+                        Label(L10n.sectionEnvironment, systemImage: "cloud.sun.fill")
                     }
                     Toggle(isOn: $showMood) {
-                        Label("🧠  \(L10n.sectionMood)", systemImage: "brain.head.profile")
+                        Label(L10n.sectionMood, systemImage: "brain.head.profile")
                     }
                 }
 

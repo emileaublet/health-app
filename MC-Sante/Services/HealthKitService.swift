@@ -19,6 +19,8 @@ struct HeartData {
 struct ActivityData {
     let calories: Double
     let minutes: Double
+    let steps: Double
+    let distanceKilometers: Double
 }
 
 struct BloodPressureData {
@@ -47,6 +49,8 @@ final class HealthKitService {
         HKQuantityType(.heartRateVariabilitySDNN),
         HKQuantityType(.activeEnergyBurned),
         HKQuantityType(.appleExerciseTime),
+        HKQuantityType(.stepCount),
+        HKQuantityType(.distanceWalkingRunning),
         HKCategoryType(.menstrualFlow),
         HKQuantityType(.bloodPressureSystolic),
         HKQuantityType(.bloodPressureDiastolic),
@@ -170,11 +174,18 @@ final class HealthKitService {
     func fetchActivityData(for date: Date) async -> ActivityData? {
         async let calories = fetchSumQuantity(.activeEnergyBurned, for: date, unit: .kilocalorie())
         async let minutes  = fetchSumQuantity(.appleExerciseTime,  for: date, unit: .minute())
+        async let steps    = fetchSumQuantity(.stepCount, for: date, unit: .count())
+        async let distance = fetchSumQuantity(.distanceWalkingRunning, for: date, unit: .meter())
 
-        let (c, m) = await (calories, minutes)
-        guard c != nil || m != nil else { return nil }
+        let (c, m, s, d) = await (calories, minutes, steps, distance)
+        guard c != nil || m != nil || s != nil || d != nil else { return nil }
 
-        return ActivityData(calories: c ?? 0, minutes: m ?? 0)
+        return ActivityData(
+            calories: c ?? 0,
+            minutes: m ?? 0,
+            steps: s ?? 0,
+            distanceKilometers: (d ?? 0) / 1000
+        )
     }
 
     // MARK: Menstrual flow

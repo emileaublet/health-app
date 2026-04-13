@@ -56,7 +56,7 @@ struct HomeView: View {
                         Button {
                             onSettingsTap()
                         } label: {
-                            Image(systemName: "gearshape")
+                            Image(systemName: "gearshape.fill")
                                 .font(.title3)
                         }
                     }
@@ -152,7 +152,7 @@ struct HomeView: View {
                                     .font(.callout)
                                     .fontWeight(isSelected ? .bold : .regular)
                                     .foregroundStyle(
-                                        isSelected ? .white
+                                        isSelected ? Color(.systemBackground)
                                         : isTodayDate ? Color.red
                                         : .primary
                                     )
@@ -165,7 +165,6 @@ struct HomeView: View {
                             .frame(width: 48)
                         }
                         .buttonStyle(.plain)
-                        .sensoryFeedback(.selection, trigger: isSelected)
                         .id(day)
                     }
                 }
@@ -323,7 +322,7 @@ struct HomeView: View {
                 Spacer()
                 HStack(spacing: 10) {
                     legendDot(.heartColor, "HR")
-                    legendDot(.pink,       "HRV")
+                    legendDot(.hrvColor,   "HRV")
                 }
                 .font(.caption2)
             }
@@ -344,7 +343,7 @@ struct HomeView: View {
                 MetricChip(
                     emoji: "💓", title: "HRV",
                     value: snap?.hrvSDNN.map { "\(Int($0)) ms" } ?? "—",
-                    accentColor: snap?.hrvSDNN != nil ? .pink : .secondary
+                    accentColor: snap?.hrvSDNN != nil ? .hrvColor : .secondary
                 )
             }
         }
@@ -364,6 +363,8 @@ struct HomeView: View {
                 HStack(spacing: 10) {
                     legendDot(.activityColor, L10n.activeCalories)
                     legendDot(.green,         L10n.exercise)
+                    legendDot(.blue,          L10n.steps)
+                    legendDot(.teal,          L10n.distance)
                 }
                 .font(.caption2)
             }
@@ -375,7 +376,7 @@ struct HomeView: View {
 
             Divider()
 
-            HStack(spacing: 8) {
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
                 MetricChip(
                     emoji: "🔥", title: L10n.activeCalories,
                     value: snap?.activeCalories.map { "\(Int($0)) kcal" } ?? "—",
@@ -385,6 +386,16 @@ struct HomeView: View {
                     emoji: "🏃", title: L10n.exercise,
                     value: snap?.exerciseMinutes.map { $0.minutesFormatted } ?? "—",
                     accentColor: snap?.exerciseMinutes != nil ? .green : .secondary
+                )
+                MetricChip(
+                    emoji: "👟", title: L10n.steps,
+                    value: snap?.stepCount.map { Int($0).formatted() } ?? "—",
+                    accentColor: snap?.stepCount != nil ? .blue : .secondary
+                )
+                MetricChip(
+                    emoji: "📍", title: L10n.distance,
+                    value: snap?.walkingRunningDistanceKilometers.map { String(format: "%.1f km", $0) } ?? "—",
+                    accentColor: snap?.walkingRunningDistanceKilometers != nil ? .teal : .secondary
                 )
             }
         }
@@ -534,9 +545,6 @@ struct HomeView: View {
                 set: { logViewModel.setDayNote($0) }
             ))
         }
-        .padding(16)
-        .background(Color(.secondarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 
     // MARK: Disclaimer
@@ -553,13 +561,9 @@ struct HomeView: View {
     // MARK: Helpers
 
     private func sectionHeader(_ title: String, icon: String) -> some View {
-        HStack(spacing: 6) {
-            Circle()
-                .fill(accentForSection(icon: icon))
-                .frame(width: 8, height: 8)
-            Label(title, systemImage: icon)
-                .font(.title3.weight(.semibold))
-        }
+        Label(title, systemImage: icon)
+            .font(.title3.weight(.semibold))
+            .foregroundStyle(accentForSection(icon: icon))
     }
 
     private func accentForSection(icon: String) -> Color {

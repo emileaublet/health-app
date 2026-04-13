@@ -46,8 +46,10 @@ final class SnapshotService {
 
         // --- Activité ---
         if let activity = await healthKit.fetchActivityData(for: date) {
-            snapshot.activeCalories  = activity.calories > 0 ? activity.calories : nil
+            snapshot.activeCalories = activity.calories > 0 ? activity.calories : nil
             snapshot.exerciseMinutes = activity.minutes > 0 ? activity.minutes : nil
+            snapshot.stepCount = activity.steps > 0 ? activity.steps : nil
+            snapshot.walkingRunningDistanceKilometers = activity.distanceKilometers > 0 ? activity.distanceKilometers : nil
         }
 
         // --- Cycle ---

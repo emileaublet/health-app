@@ -8,41 +8,26 @@ struct ContentView: View {
     let notifications: NotificationService
     let snapshotService: SnapshotService
 
-    @State private var selectedTab: Tab = .home
-
-    enum Tab: Int {
-        case home, settings
-    }
+    @State private var showingSettings = false
 
     var body: some View {
         if hasCompletedOnboarding {
-            mainTabView
+            HomeView(snapshotService: snapshotService, onSettingsTap: {
+                showingSettings = true
+            })
+            .sheet(isPresented: $showingSettings) {
+                SettingsView(
+                    notificationService: notifications,
+                    healthKit: healthKit,
+                    weather: weather
+                )
+            }
         } else {
             OnboardingView(
                 healthKit: healthKit,
                 weather: weather,
                 notifications: notifications
             )
-        }
-    }
-
-    private var mainTabView: some View {
-        TabView(selection: $selectedTab) {
-            HomeView(snapshotService: snapshotService, onSettingsTap: { selectedTab = .settings })
-                .tabItem {
-                    Label(L10n.tabHome, systemImage: "house.fill")
-                }
-                .tag(Tab.home)
-
-            SettingsView(
-                notificationService: notifications,
-                healthKit: healthKit,
-                weather: weather
-            )
-            .tabItem {
-                Label(L10n.tabSettings, systemImage: "gearshape.fill")
-            }
-            .tag(Tab.settings)
         }
     }
 }

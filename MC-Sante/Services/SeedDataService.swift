@@ -67,6 +67,8 @@ struct SeedDataService {
             // Activity
             snapshot.activeCalories = Double.random(in: 150...550)
             snapshot.exerciseMinutes = Double.random(in: 10...60)
+            snapshot.stepCount = Double.random(in: 3000...14000)
+            snapshot.walkingRunningDistanceKilometers = Double.random(in: 1.8...10.5)
 
             // Blood pressure (some days only)
             if Bool.random() {

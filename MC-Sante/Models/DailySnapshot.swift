@@ -20,6 +20,8 @@ final class DailySnapshot {
     // HealthKit — Activité
     var activeCalories: Double?
     var exerciseMinutes: Double?
+    var stepCount: Double?
+    var walkingRunningDistanceKilometers: Double?
 
     // HealthKit — Cycle
     var menstrualFlowRaw: Int?  // 0=none, 1=light, 2=medium, 3=heavy

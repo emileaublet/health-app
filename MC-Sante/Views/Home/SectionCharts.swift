@@ -66,33 +66,53 @@ struct CardiacChartView: View {
     private struct HeartPoint: Identifiable {
         let id = UUID()
         let date: Date
-        let metric: String
         let value: Double
     }
 
-    private var points: [HeartPoint] {
-        snapshots.flatMap { snap -> [HeartPoint] in
-            var pts: [HeartPoint] = []
-            if let hr  = snap.restingHeartRate { pts.append(.init(date: snap.date, metric: "HR",  value: hr))  }
-            if let hrv = snap.hrvSDNN          { pts.append(.init(date: snap.date, metric: "HRV", value: hrv)) }
-            return pts
+    private var heartRatePoints: [HeartPoint] {
+        snapshots.compactMap { snap in
+            guard let hr = snap.restingHeartRate else { return nil }
+            return HeartPoint(date: snap.date, value: hr)
+        }
+    }
+
+    private var hrvPoints: [HeartPoint] {
+        snapshots.compactMap { snap in
+            guard let hrv = snap.hrvSDNN else { return nil }
+            return HeartPoint(date: snap.date, value: hrv)
         }
     }
 
     var body: some View {
-        Chart(points) { pt in
-            LineMark(
-                x: .value("Day", pt.date, unit: .day),
-                y: .value("Val", pt.value)
-            )
-            .foregroundStyle(by: .value("Metric", pt.metric))
-            .interpolationMethod(.catmullRom)
-            .lineStyle(StrokeStyle(lineWidth: 2))
-            .symbol(Circle())
-            .symbolSize(pt.metric == "HR" ? 28 : 18)
-            .opacity(Calendar.current.isDate(pt.date, inSameDayAs: selectedDate) ? 1.0 : 0.65)
+        Chart {
+            ForEach(heartRatePoints) { pt in
+                LineMark(
+                    x: .value("Day", pt.date, unit: .day),
+                    y: .value("Resting HR", pt.value),
+                    series: .value("Metric", "HR")
+                )
+                .foregroundStyle(Color.heartColor)
+                .interpolationMethod(.catmullRom)
+                .lineStyle(StrokeStyle(lineWidth: 2.5))
+                .symbol(Circle())
+                .symbolSize(28)
+                .opacity(Calendar.current.isDate(pt.date, inSameDayAs: selectedDate) ? 1.0 : 0.65)
+            }
+
+            ForEach(hrvPoints) { pt in
+                LineMark(
+                    x: .value("Day", pt.date, unit: .day),
+                    y: .value("HRV", pt.value),
+                    series: .value("Metric", "HRV")
+                )
+                .foregroundStyle(Color.hrvColor)
+                .interpolationMethod(.catmullRom)
+                .lineStyle(StrokeStyle(lineWidth: 2, dash: [6, 4]))
+                .symbol(.diamond)
+                .symbolSize(30)
+                .opacity(Calendar.current.isDate(pt.date, inSameDayAs: selectedDate) ? 1.0 : 0.65)
+            }
         }
-        .chartForegroundStyleScale(["HR": Color.heartColor, "HRV": Color.pink])
         .chartLegend(.hidden)
         .chartXAxis {
             AxisMarks(values: .stride(by: .day)) { _ in

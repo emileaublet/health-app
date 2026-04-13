@@ -98,8 +98,8 @@ enum CSVExporter {
         var lines: [String] = []
         let isFrench = LocalizationManager.shared.language == .french
         var header = isFrench
-            ? "Date,Sommeil (h),REM (min),Deep (min),FC repos,HRV,Calories,Exercice (min),Humeur (valence),Temp (°C),Pression (hPa),Humidité (%)"
-            : "Date,Sleep (h),REM (min),Deep (min),Resting HR,HRV,Calories,Exercise (min),Mood (valence),Temp (°C),Pressure (hPa),Humidity (%)"
+            ? "Date,Sommeil (h),REM (min),Deep (min),FC repos,HRV,Calories,Exercice (min),Pas,Distance (km),Humeur (valence),Temp (°C),Pression (hPa),Humidité (%)"
+            : "Date,Sleep (h),REM (min),Deep (min),Resting HR,HRV,Calories,Exercise (min),Steps,Distance (km),Mood (valence),Temp (°C),Pressure (hPa),Humidity (%)"
         for cat in categories { header += ",\(cat.name)" }
         lines.append(header)
 
@@ -112,6 +112,8 @@ enum CSVExporter {
             row += ",\(snapshot.hrvSDNN.csvValue)"
             row += ",\(snapshot.activeCalories.csvValue)"
             row += ",\(snapshot.exerciseMinutes.csvValue)"
+            row += ",\(snapshot.stepCount.csvValue)"
+            row += ",\(snapshot.walkingRunningDistanceKilometers.csvValue)"
             row += ",\(snapshot.moodValence.csvValue)"
             row += ",\(snapshot.temperatureCelsius.csvValue)"
             row += ",\(snapshot.pressureHPa.csvValue)"
