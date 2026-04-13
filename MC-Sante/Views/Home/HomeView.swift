@@ -74,13 +74,23 @@ struct HomeView: View {
 
             Spacer()
 
-            VStack(spacing: 2) {
-                Text(viewModel.dateTitle)
-                    .font(.headline)
-                Text(viewModel.selectedDate.shortDateString)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+            Button {
+                viewModel.selectedDate = Calendar.current.startOfDay(for: .now)
+            } label: {
+                VStack(spacing: 2) {
+                    Text(viewModel.dateTitle)
+                        .font(.headline)
+                    Text(viewModel.selectedDate.shortDateString)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Text(LocalizationManager.shared.language == .french ? "↩ Aujourd'hui" : "↩ Today")
+                        .font(.caption2)
+                        .foregroundStyle(.accentColor)
+                        .opacity(viewModel.isToday ? 0 : 1)
+                }
             }
+            .buttonStyle(.plain)
+            .disabled(viewModel.isToday)
 
             Spacer()
 
@@ -102,12 +112,19 @@ struct HomeView: View {
         HStack {
             Text(L10n.streakDays(viewModel.currentStreak))
                 .font(.callout.weight(.semibold))
+                .foregroundStyle(.white)
             Spacer()
+            Image(systemName: "flame.fill")
+                .font(.title3)
+                .foregroundStyle(.white.opacity(0.9))
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
-        .background(Color.orange.opacity(0.15))
+        .background(
+            LinearGradient(colors: [.orange, .pink], startPoint: .leading, endPoint: .trailing)
+        )
         .clipShape(RoundedRectangle(cornerRadius: 12))
+        .shadow(color: .orange.opacity(0.3), radius: 6, y: 3)
     }
 
     // MARK: Skeleton
@@ -129,6 +146,23 @@ struct HomeView: View {
             // Streak banner
             if viewModel.currentStreak > 0 {
                 streakBanner
+            }
+
+            // Empty state: no snapshot and not loading
+            if viewModel.todaySnapshot == nil && !viewModel.isLoading {
+                VStack(spacing: 12) {
+                    Image(systemName: "waveform.path.ecg")
+                        .font(.system(size: 48))
+                        .foregroundStyle(.secondary)
+                    Text(LocalizationManager.shared.language == .french
+                         ? "Aucune donnée HealthKit pour ce jour."
+                         : "No HealthKit data for this day.")
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 40)
             }
 
             sleepSection
@@ -421,20 +455,38 @@ struct HomeView: View {
     }
 
     private var noInsightPlaceholder: some View {
-        HStack {
-            Image(systemName: "chart.line.uptrend.xyaxis")
-                .font(.title2)
-                .foregroundStyle(.secondary)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(L10n.keepLogging)
-                    .font(.callout.weight(.medium))
-                Text(L10n.daysUntilCorrelations(viewModel.daysUntilFirstInsight))
-                    .font(.caption)
+        HStack(spacing: 0) {
+            // Left accent bar
+            Rectangle()
+                .fill(Color.accentColor)
+                .frame(width: 4)
+                .clipShape(
+                    UnevenRoundedRectangle(
+                        topLeadingRadius: 14, bottomLeadingRadius: 14,
+                        bottomTrailingRadius: 0, topTrailingRadius: 0
+                    )
+                )
+
+            HStack {
+                Image(systemName: "chart.line.uptrend.xyaxis")
+                    .font(.title2)
                     .foregroundStyle(.secondary)
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(L10n.keepLogging)
+                        .font(.callout.weight(.medium))
+                    Text(L10n.daysUntilCorrelations(viewModel.daysUntilFirstInsight))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    ProgressView(
+                        value: Double(7 - viewModel.daysUntilFirstInsight),
+                        total: 7
+                    )
+                    .tint(.accentColor)
+                }
+                Spacer()
             }
-            Spacer()
+            .padding()
         }
-        .padding()
         .background(Color(.secondarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 14))
     }
@@ -453,8 +505,25 @@ struct HomeView: View {
     // MARK: Helpers
 
     private func sectionHeader(_ title: String, icon: String) -> some View {
-        Label(title, systemImage: icon)
-            .font(.headline)
+        HStack(spacing: 6) {
+            Circle()
+                .fill(accentForSection(icon: icon))
+                .frame(width: 8, height: 8)
+            Label(title, systemImage: icon)
+                .font(.title3.weight(.semibold))
+        }
+    }
+
+    private func accentForSection(icon: String) -> Color {
+        switch icon {
+        case "moon.fill":           return .sleepColor
+        case "heart.fill":          return .heartColor
+        case "figure.run":          return .activityColor
+        case "drop.fill":           return .pink
+        case "cloud.sun.fill":      return .weatherColor
+        case "brain.head.profile":  return .moodColor
+        default:                    return .accentColor
+        }
     }
 
     private func moodLabel(_ valence: Double) -> String {
