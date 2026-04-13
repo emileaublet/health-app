@@ -17,6 +17,13 @@ struct SettingsView: View {
     @State private var exportURL: URL?
     @State private var showingDeleteConfirmation = false
 
+    @AppStorage("section_sleep")    private var showSleep    = true
+    @AppStorage("section_cardiac")  private var showCardiac  = true
+    @AppStorage("section_activity") private var showActivity = true
+    @AppStorage("section_cycle")    private var showCycle    = true
+    @AppStorage("section_weather")  private var showWeather  = true
+    @AppStorage("section_mood")     private var showMood     = true
+
     init(
         notificationService: NotificationService,
         healthKit: HealthKitService,
@@ -56,6 +63,28 @@ struct SettingsView: View {
                         DataSourcesView(healthKit: healthKit, weather: weather)
                     } label: {
                         Label(L10n.healthKitWeather, systemImage: "iphone.and.arrow.forward.outward")
+                    }
+                }
+
+                // MARK: Sections affichées
+                Section(L10n.sectionDisplayed) {
+                    Toggle(isOn: $showSleep) {
+                        Label("😴  \(L10n.sectionSleep)", systemImage: "moon.fill")
+                    }
+                    Toggle(isOn: $showCardiac) {
+                        Label("❤️  \(L10n.sectionCardiac)", systemImage: "heart.fill")
+                    }
+                    Toggle(isOn: $showActivity) {
+                        Label("🏃  \(L10n.sectionActivity)", systemImage: "figure.run")
+                    }
+                    Toggle(isOn: $showCycle) {
+                        Label("🩸  \(L10n.sectionCycle)", systemImage: "drop.fill")
+                    }
+                    Toggle(isOn: $showWeather) {
+                        Label("🌡️  \(L10n.sectionEnvironment)", systemImage: "cloud.sun.fill")
+                    }
+                    Toggle(isOn: $showMood) {
+                        Label("🧠  \(L10n.sectionMood)", systemImage: "brain.head.profile")
                     }
                 }
 

@@ -73,6 +73,7 @@ enum L10n {
     static var sectionEnvironment: String { lang == .french ? "Environnement" : "Environment" }
     static var sectionMood: String { lang == .french ? "Humeur" : "Mood" }
     static var sectionCycle: String { lang == .french ? "Cycle" : "Cycle" }
+    static var sectionDisplayed: String { lang == .french ? "Sections affichées" : "Displayed Sections" }
     static var sectionDailyCorrelation: String { lang == .french ? "Corrélation du jour" : "Daily Correlation" }
 
     // Metric titles

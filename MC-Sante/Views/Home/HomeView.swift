@@ -7,6 +7,14 @@ struct HomeView: View {
     @State private var showingCelebration = false
     @Binding var selectedTab: ContentView.Tab
 
+    // Per-section visibility (persisted in UserDefaults)
+    @AppStorage("section_sleep")    private var showSleep    = true
+    @AppStorage("section_cardiac")  private var showCardiac  = true
+    @AppStorage("section_activity") private var showActivity = true
+    @AppStorage("section_cycle")    private var showCycle    = true
+    @AppStorage("section_weather")  private var showWeather  = true
+    @AppStorage("section_mood")     private var showMood     = true
+
     init(snapshotService: SnapshotService, selectedTab: Binding<ContentView.Tab>) {
         _viewModel = State(wrappedValue: HomeViewModel(snapshotService: snapshotService))
         _selectedTab = selectedTab
@@ -165,12 +173,12 @@ struct HomeView: View {
                 .padding(.vertical, 40)
             }
 
-            sleepSection
-            cardiacSection
-            activitySection
-            cycleSection
-            weatherSection
-            moodSection
+            if showSleep    { sleepSection }
+            if showCardiac  { cardiacSection }
+            if showActivity { activitySection }
+            if showCycle    { cycleSection }
+            if showWeather  { weatherSection }
+            if showMood     { moodSection }
             insightSection
             disclaimerFooter
         }
