@@ -274,6 +274,62 @@ struct MoodChartView: View {
     }
 }
 
+// MARK: - Blood Pressure Chart (dual line: Systolic + Diastolic)
+
+struct BloodPressureChartView: View {
+    let snapshots: [DailySnapshot]
+    let selectedDate: Date
+
+    private struct BPPoint: Identifiable {
+        let id = UUID()
+        let date: Date
+        let metric: String
+        let value: Double
+    }
+
+    private var points: [BPPoint] {
+        snapshots.flatMap { snap -> [BPPoint] in
+            var pts: [BPPoint] = []
+            if let sys = snap.systolic  { pts.append(.init(date: snap.date, metric: "Sys", value: sys))  }
+            if let dia = snap.diastolic { pts.append(.init(date: snap.date, metric: "Dia", value: dia)) }
+            return pts
+        }
+    }
+
+    var body: some View {
+        Chart(points) { pt in
+            LineMark(
+                x: .value("Day", pt.date, unit: .day),
+                y: .value("mmHg", pt.value)
+            )
+            .foregroundStyle(by: .value("Metric", pt.metric))
+            .interpolationMethod(.catmullRom)
+            .lineStyle(StrokeStyle(lineWidth: 2))
+            .symbol(Circle())
+            .symbolSize(24)
+            .opacity(Calendar.current.isDate(pt.date, inSameDayAs: selectedDate) ? 1.0 : 0.65)
+        }
+        .chartForegroundStyleScale(["Sys": Color.red, "Dia": Color.blue])
+        .chartLegend(.hidden)
+        .chartXAxis {
+            AxisMarks(values: .stride(by: .day)) { _ in
+                AxisValueLabel(format: .dateTime.weekday(.narrow))
+                    .font(.caption2)
+            }
+        }
+        .chartYAxis {
+            AxisMarks(position: .leading, values: .automatic(desiredCount: 4)) { value in
+                AxisGridLine()
+                AxisValueLabel {
+                    if let v = value.as(Double.self) {
+                        Text("\(Int(v))").font(.caption2)
+                    }
+                }
+            }
+        }
+    }
+}
+
 // MARK: - Cycle Chart (bars: Flow intensity 0–4)
 
 struct CycleChartView: View {

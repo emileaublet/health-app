@@ -16,8 +16,14 @@ final class HomeViewModel {
     // Date navigation
     var selectedDate: Date = Calendar.current.startOfDay(for: .now)
 
+    // CalendarStrip: dates that have snapshot data
+    var datesWithData: Set<Date> = []
+
     // Streak logging
     var currentStreak: Int = 0
+
+    // Error handling
+    var showSaveError: Bool = false
 
     private let snapshotService: SnapshotService
 
@@ -29,50 +35,30 @@ final class HomeViewModel {
         Calendar.current.isDateInToday(selectedDate)
     }
 
-    var canGoForward: Bool {
-        guard let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: selectedDate) else { return false }
-        return tomorrow <= Calendar.current.startOfDay(for: .now)
-    }
-
-    func goToPreviousDay() {
-        guard let prev = Calendar.current.date(byAdding: .day, value: -1, to: selectedDate) else { return }
-        todaySnapshot = nil
-        selectedDate = prev
-    }
-
-    func goToNextDay() {
-        guard canGoForward,
-              let next = Calendar.current.date(byAdding: .day, value: 1, to: selectedDate) else { return }
-        todaySnapshot = nil
-        selectedDate = next
-    }
-
-    var dateTitle: String {
-        if isToday { return L10n.today }
-        if Calendar.current.isDateInYesterday(selectedDate) { return L10n.yesterday }
-        return selectedDate.dayOfWeekString
-    }
-
+    /// Unified data loader. When `forceRefresh` is true, always fetches from HealthKit/weather.
     @MainActor
-    func loadDay(context: ModelContext) async {
+    func loadDay(context: ModelContext, forceRefresh: Bool = false) async {
         isLoading = true
         defer { isLoading = false }
 
         let day = selectedDate
 
-        // Check if we already have a complete snapshot cached in SwiftData
+        // Snapshot: use cache or fetch fresh
         let snapshotDescriptor = FetchDescriptor<DailySnapshot>(
             predicate: #Predicate { $0.date == day }
         )
-        let cached = (try? context.fetch(snapshotDescriptor))?.first
 
-        if let cached, cached.isComplete {
-            // Complete snapshot exists — use cache, no network calls
-            todaySnapshot = cached
-        } else {
-            // No snapshot or incomplete — fetch fresh data
+        if forceRefresh {
             await snapshotService.buildSnapshot(for: day, context: context)
             todaySnapshot = (try? context.fetch(snapshotDescriptor))?.first
+        } else {
+            let cached = (try? context.fetch(snapshotDescriptor))?.first
+            if let cached, cached.isComplete {
+                todaySnapshot = cached
+            } else {
+                await snapshotService.buildSnapshot(for: day, context: context)
+                todaySnapshot = (try? context.fetch(snapshotDescriptor))?.first
+            }
         }
 
         // Manual entries for the day
@@ -97,48 +83,16 @@ final class HomeViewModel {
         recentSnapshots = loadRecentSnapshots(before: day, context: context)
 
         // Backfill missing days from HealthKit for bar charts
-        if recentSnapshots.count < 7 {
+        if !forceRefresh && recentSnapshots.count < 7 {
             await backfillRecentDays(around: day, context: context)
             recentSnapshots = loadRecentSnapshots(before: day, context: context)
         }
 
         // Streak
         currentStreak = computeStreak(context: context)
-    }
 
-    /// Force-refresh: always fetches from HealthKit/weather, ignoring cache.
-    @MainActor
-    func forceRefresh(context: ModelContext) async {
-        isLoading = true
-        defer { isLoading = false }
-
-        let day = selectedDate
-        await snapshotService.buildSnapshot(for: day, context: context)
-
-        let snapshotDescriptor = FetchDescriptor<DailySnapshot>(
-            predicate: #Predicate { $0.date == day }
-        )
-        todaySnapshot = (try? context.fetch(snapshotDescriptor))?.first
-
-        let entryDescriptor = FetchDescriptor<DailyEntry>(
-            predicate: #Predicate { $0.date == day }
-        )
-        todayEntries = (try? context.fetch(entryDescriptor)) ?? []
-
-        let correlationDescriptor = FetchDescriptor<CorrelationResult>(
-            sortBy: [SortDescriptor(\.pearsonR, order: .reverse)]
-        )
-        let correlations = (try? context.fetch(correlationDescriptor)) ?? []
-        topInsight = correlations.max(by: { abs($0.pearsonR) < abs($1.pearsonR) })
-
-        let snapshotsAll = FetchDescriptor<DailySnapshot>()
-        let count = (try? context.fetchCount(snapshotsAll)) ?? 0
-        daysUntilFirstInsight = max(0, 7 - count)
-
-        // Sparkline data
-        recentSnapshots = loadRecentSnapshots(before: day, context: context)
-
-        currentStreak = computeStreak(context: context)
+        // CalendarStrip: load all dates that have snapshot data
+        loadDatesWithData(context: context)
     }
 
     /// Builds snapshots from HealthKit for missing days in the last 7 days.
@@ -169,21 +123,34 @@ final class HomeViewModel {
     }
 
     private func computeStreak(context: ModelContext) -> Int {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: .now)
+        // Only look back 90 days max to avoid fetching entire history
+        guard let cutoff = calendar.date(byAdding: .day, value: -90, to: today) else { return 0 }
         let descriptor = FetchDescriptor<DailySnapshot>(
+            predicate: #Predicate { $0.date >= cutoff },
             sortBy: [SortDescriptor(\.date, order: .reverse)]
         )
         let snapshots = (try? context.fetch(descriptor)) ?? []
         var streak = 0
-        var currentDate = Calendar.current.startOfDay(for: .now)
+        var currentDate = today
         for snapshot in snapshots {
             if snapshot.date == currentDate {
                 streak += 1
-                guard let prev = Calendar.current.date(byAdding: .day, value: -1, to: currentDate) else { break }
+                guard let prev = calendar.date(byAdding: .day, value: -1, to: currentDate) else { break }
                 currentDate = prev
             } else {
                 break
             }
         }
         return streak
+    }
+
+    private func loadDatesWithData(context: ModelContext) {
+        let descriptor = FetchDescriptor<DailySnapshot>(
+            predicate: #Predicate { $0.isComplete == true }
+        )
+        let snapshots = (try? context.fetch(descriptor)) ?? []
+        datesWithData = Set(snapshots.map { $0.date })
     }
 }

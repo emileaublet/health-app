@@ -9,35 +9,18 @@ final class LogViewModel {
     var dayNote: String = ""
     var isSaving = false
 
+    // CalendarStrip: dates that have logged entries
+    var datesWithEntries: Set<Date> = []
+
+    // Error handling
+    var showSaveError: Bool = false
+
     private var context: ModelContext?
 
     func configure(context: ModelContext) {
         self.context = context
         loadCategories()
-    }
-
-    // MARK: Navigation
-
-    func goToPreviousDay() {
-        guard let prev = Calendar.current.date(byAdding: .day, value: -1, to: selectedDate) else { return }
-        selectedDate = prev
-        loadEntriesForCurrentDate()
-    }
-
-    func goToNextDay() {
-        guard let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: selectedDate) else { return }
-        guard tomorrow <= Calendar.current.startOfDay(for: .now) else { return }
-        selectedDate = tomorrow
-        loadEntriesForCurrentDate()
-    }
-
-    var isToday: Bool {
-        Calendar.current.isDateInToday(selectedDate)
-    }
-
-    var canGoForward: Bool {
-        guard let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: selectedDate) else { return false }
-        return tomorrow <= Calendar.current.startOfDay(for: .now)
+        loadDatesWithEntries()
     }
 
     // MARK: Data loading
@@ -79,7 +62,11 @@ final class LogViewModel {
             context.insert(entry)
             entriesForDate[category.id] = entry
         }
-        try? context.save()
+        saveContext()
+        // Update CalendarStrip dots
+        if value > 0 {
+            datesWithEntries.insert(selectedDate)
+        }
     }
 
     func currentValue(for category: TrackingCategory) -> Double {
@@ -93,20 +80,20 @@ final class LogViewModel {
         // Prefer updating an entry that already carries a note
         if let existing = entriesForDate.values.first(where: { $0.note != nil }) {
             existing.note = text.isEmpty ? nil : text
-            try? context.save()
+            saveContext()
             return
         }
         // Fall back to any existing entry for this day
         if let first = entriesForDate.values.first {
             first.note = text.isEmpty ? nil : text
-            try? context.save()
+            saveContext()
             return
         }
         // No entries yet — create a note-only entry (category = nil)
         if !text.isEmpty {
             let entry = DailyEntry(date: selectedDate, value: 0, note: text)
             context.insert(entry)
-            try? context.save()
+            saveContext()
         }
     }
 
@@ -129,19 +116,19 @@ final class LogViewModel {
             sortOrder: maxOrder + 1
         )
         context.insert(category)
-        try? context.save()
+        saveContext()
         loadCategories()
     }
 
     func archiveCategory(_ category: TrackingCategory) {
         category.isActive = false
-        try? context?.save()
+        saveContext()
         loadCategories()
     }
 
     func reactivateCategory(_ category: TrackingCategory) {
         category.isActive = true
-        try? context?.save()
+        saveContext()
         loadCategories()
     }
 
@@ -149,6 +136,31 @@ final class LogViewModel {
         for (index, category) in categories.enumerated() {
             category.sortOrder = index
         }
-        try? context?.save()
+        saveContext()
+    }
+
+    func onDateChanged() {
+        loadEntriesForCurrentDate()
+    }
+
+    // MARK: Dates with entries (for CalendarStrip)
+
+    func loadDatesWithEntries() {
+        guard let context else { return }
+        let descriptor = FetchDescriptor<DailyEntry>()
+        let entries = (try? context.fetch(descriptor)) ?? []
+        datesWithEntries = Set(entries.compactMap { entry in
+            entry.value > 0 ? entry.date : nil
+        })
+    }
+
+    // MARK: Safe save
+
+    private func saveContext() {
+        do {
+            try context?.save()
+        } catch {
+            showSaveError = true
+        }
     }
 }

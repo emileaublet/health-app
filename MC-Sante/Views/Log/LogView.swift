@@ -8,17 +8,19 @@ struct LogView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                // Navigation de date
-                dateNavigator
-                    .padding(.horizontal)
-                    .padding(.vertical, 10)
-                    .background(Color(.systemBackground))
+            ScrollView {
+                VStack(spacing: 0) {
+                    // Calendar strip (scrolls with content)
+                    CalendarStrip(
+                        selectedDate: $viewModel.selectedDate,
+                        markedDates: viewModel.datesWithEntries
+                    )
+                    .padding(.vertical, 8)
 
-                Divider()
+                    Divider()
+                        .padding(.bottom, 4)
 
-                // Liste des catégories
-                ScrollView {
+                    // Liste des catégories
                     LazyVStack(spacing: 12) {
                         if viewModel.categories.isEmpty {
                             ForEach(0..<5, id: \.self) { _ in
@@ -59,55 +61,32 @@ struct LogView: View {
             }
             .navigationTitle(L10n.logTitle)
             .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    if !Calendar.current.isDateInToday(viewModel.selectedDate) {
+                        Button {
+                            viewModel.selectedDate = Calendar.current.startOfDay(for: .now)
+                        } label: {
+                            Image(systemName: "calendar.badge.clock")
+                        }
+                    }
+                }
+            }
             .sheet(isPresented: $showingAddCategory) {
                 CategoryEditorSheet(viewModel: viewModel)
+            }
+            .alert(L10n.saveError, isPresented: $viewModel.showSaveError) {
+                Button(L10n.ok) {}
+            } message: {
+                Text(L10n.saveErrorMessage)
             }
         }
         .onAppear {
             viewModel.configure(context: modelContext)
         }
-    }
-
-    // MARK: Date navigator
-
-    private var dateNavigator: some View {
-        HStack {
-            Button {
-                viewModel.goToPreviousDay()
-            } label: {
-                Image(systemName: "chevron.left")
-                    .font(.title3.weight(.semibold))
-                    .frame(width: 44, height: 44)
-            }
-
-            Spacer()
-
-            VStack(spacing: 2) {
-                Text(dateTitle)
-                    .font(.headline)
-                Text(viewModel.selectedDate.shortDateString)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-
-            Spacer()
-
-            Button {
-                viewModel.goToNextDay()
-            } label: {
-                Image(systemName: "chevron.right")
-                    .font(.title3.weight(.semibold))
-                    .frame(width: 44, height: 44)
-            }
-            .opacity(viewModel.canGoForward ? 1 : 0.3)
-            .disabled(!viewModel.canGoForward)
+        .onChange(of: viewModel.selectedDate) { _, _ in
+            viewModel.onDateChanged()
         }
-    }
-
-    private var dateTitle: String {
-        if viewModel.isToday { return L10n.today }
-        if Calendar.current.isDateInYesterday(viewModel.selectedDate) { return L10n.yesterday }
-        return viewModel.selectedDate.dayOfWeekString
     }
 
     // MARK: Note section

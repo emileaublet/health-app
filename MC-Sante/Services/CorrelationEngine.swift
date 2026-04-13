@@ -15,7 +15,7 @@ enum CorrelationEngine {
 
     // MARK: Pearson coefficient
 
-    /// Retourne nil si moins de 7 points communs.
+    /// Returns nil if fewer than 7 common data points.
     static func pearson(_ x: [Double], _ y: [Double]) -> Double? {
         guard x.count == y.count, x.count >= 7 else { return nil }
 
@@ -40,6 +40,39 @@ enum CorrelationEngine {
         return numerator / denominator
     }
 
+    // MARK: Spearman rank correlation
+
+    /// Computes Spearman's rank correlation — captures non-linear monotonic relationships.
+    /// Returns nil if fewer than 7 data points.
+    static func spearman(_ x: [Double], _ y: [Double]) -> Double? {
+        guard x.count == y.count, x.count >= 7 else { return nil }
+        let rankedX = fractionalRanks(x)
+        let rankedY = fractionalRanks(y)
+        return pearson(rankedX, rankedY)
+    }
+
+    /// Assigns fractional ranks to values (handles ties by averaging).
+    private static func fractionalRanks(_ values: [Double]) -> [Double] {
+        let indexed = values.enumerated().sorted { $0.element < $1.element }
+        var ranks = [Double](repeating: 0, count: values.count)
+
+        var i = 0
+        while i < indexed.count {
+            var j = i
+            // Find all tied values
+            while j < indexed.count && indexed[j].element == indexed[i].element {
+                j += 1
+            }
+            // Average rank for tied values
+            let avgRank = Double(i + j + 1) / 2.0
+            for k in i..<j {
+                ranks[indexed[k].offset] = avgRank
+            }
+            i = j
+        }
+        return ranks
+    }
+
     // MARK: Extract series
 
     static func extractAllSeries(
@@ -60,6 +93,8 @@ enum CorrelationEngine {
             (isFrench ? "Calories actives"      : "Active Calories",     "🔥", { $0.activeCalories }),
             (isFrench ? "Minutes exercice"      : "Exercise (min)",      "🏃", { $0.exerciseMinutes }),
             (isFrench ? "Humeur (valence)"      : "Mood (valence)",      "🧠", { $0.moodValence }),
+            (isFrench ? "Systolique (mmHg)"     : "Systolic (mmHg)",     "🫀", { $0.systolic }),
+            (isFrench ? "Diastolique (mmHg)"    : "Diastolic (mmHg)",    "💉", { $0.diastolic }),
             (isFrench ? "Température (°C)"      : "Temperature (°C)",    "🌡️", { $0.temperatureCelsius }),
             (isFrench ? "Pression (hPa)"        : "Pressure (hPa)",     "📊", { $0.pressureHPa }),
             (isFrench ? "Humidité (%)"          : "Humidity (%)",        "💧", { $0.humidityPercent }),
@@ -96,7 +131,7 @@ enum CorrelationEngine {
     static func computeAll(
         series: [MetricSeries],
         windowDays: Int = 14,
-        maxLag: Int = 1
+        maxLag: Int = 2
     ) -> [CorrelationResult] {
         var results: [CorrelationResult] = []
         let cal = Calendar.current
@@ -125,7 +160,13 @@ enum CorrelationEngine {
                         }
                     }
 
-                    if let r = pearson(xVals, yVals), abs(r) > abs(bestR) {
+                    // Use the strongest of Pearson (linear) and Spearman (monotonic non-linear)
+                    let candidates = [
+                        pearson(xVals, yVals),
+                        spearman(xVals, yVals),
+                    ].compactMap { $0 }
+
+                    if let r = candidates.max(by: { abs($0) < abs($1) }), abs(r) > abs(bestR) {
                         bestR = r
                         bestLag = lag
                         bestSize = xVals.count
@@ -166,7 +207,12 @@ enum CorrelationEngine {
 
         if LocalizationManager.shared.language == .french {
             let direction = r > 0 ? "augmente" : "diminue"
-            let lagText = lag == 0 ? "le même jour" : "le lendemain"
+            let lagText: String
+            switch lag {
+            case 0: lagText = "le même jour"
+            case 1: lagText = "le lendemain"
+            default: lagText = "\(lag) jours après"
+            }
             let strengthText: String
             switch abs(r) {
             case 0.7...: strengthText = "forte"
@@ -176,7 +222,12 @@ enum CorrelationEngine {
             return "Sur les \(window) derniers jours, quand \(metricA) est élevé·e, \(metricB) tend à \(direction) \(lagText). Corrélation \(strengthText) (r=\(sign)\(rFormatted), n=\(window) j)."
         } else {
             let direction = r > 0 ? "increase" : "decrease"
-            let lagText = lag == 0 ? "on the same day" : "the next day"
+            let lagText: String
+            switch lag {
+            case 0: lagText = "on the same day"
+            case 1: lagText = "the next day"
+            default: lagText = "\(lag) days later"
+            }
             let strengthText: String
             switch abs(r) {
             case 0.7...: strengthText = "strong"

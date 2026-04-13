@@ -20,6 +20,7 @@ struct SettingsView: View {
     @AppStorage("section_sleep")    private var showSleep    = true
     @AppStorage("section_cardiac")  private var showCardiac  = true
     @AppStorage("section_activity") private var showActivity = true
+    @AppStorage("section_bp")       private var showBP       = true
     @AppStorage("section_cycle")    private var showCycle    = true
     @AppStorage("section_weather")  private var showWeather  = true
     @AppStorage("section_mood")     private var showMood     = true
@@ -76,6 +77,9 @@ struct SettingsView: View {
                     }
                     Toggle(isOn: $showActivity) {
                         Label("🏃  \(L10n.sectionActivity)", systemImage: "figure.run")
+                    }
+                    Toggle(isOn: $showBP) {
+                        Label("🫀  \(L10n.sectionBloodPressure)", systemImage: "heart.text.clipboard")
                     }
                     Toggle(isOn: $showCycle) {
                         Label("🩸  \(L10n.sectionCycle)", systemImage: "drop.fill")

@@ -11,6 +11,7 @@ struct HomeView: View {
     @AppStorage("section_sleep")    private var showSleep    = true
     @AppStorage("section_cardiac")  private var showCardiac  = true
     @AppStorage("section_activity") private var showActivity = true
+    @AppStorage("section_bp")       private var showBP       = true
     @AppStorage("section_cycle")    private var showCycle    = true
     @AppStorage("section_weather")  private var showWeather  = true
     @AppStorage("section_mood")     private var showMood     = true
@@ -22,42 +23,57 @@ struct HomeView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                dateNavigator
-                    .padding(.horizontal)
-                    .padding(.vertical, 10)
-                    .background(Color(.systemBackground))
+            ScrollView {
+                VStack(spacing: 0) {
+                    // Calendar strip (scrolls with content, not sticky)
+                    CalendarStrip(
+                        selectedDate: $viewModel.selectedDate,
+                        markedDates: viewModel.datesWithData
+                    )
+                    .padding(.vertical, 8)
 
-                Divider()
+                    Divider()
+                        .padding(.bottom, 4)
 
-                ScrollView {
                     if viewModel.isLoading && viewModel.todaySnapshot == nil {
                         skeletonContent
                     } else {
                         dataContent
                     }
                 }
-                .refreshable {
-                    await viewModel.forceRefresh(context: modelContext)
-                }
+            }
+            .refreshable {
+                await viewModel.loadDay(context: modelContext, forceRefresh: true)
             }
             .navigationTitle(L10n.tabHome)
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     HStack(spacing: 12) {
+                        if !viewModel.isToday {
+                            Button {
+                                viewModel.selectedDate = Calendar.current.startOfDay(for: .now)
+                            } label: {
+                                Image(systemName: "calendar.badge.clock")
+                            }
+                        }
                         Button {
                             selectedTab = .log
                         } label: {
                             Image(systemName: "pencil.circle.fill")
                         }
                         Button {
-                            Task { await viewModel.forceRefresh(context: modelContext) }
+                            Task { await viewModel.loadDay(context: modelContext, forceRefresh: true) }
                         } label: {
                             Image(systemName: "arrow.clockwise")
                         }
                     }
                 }
+            }
+            .alert(L10n.saveError, isPresented: $viewModel.showSaveError) {
+                Button(L10n.ok) {}
+            } message: {
+                Text(L10n.saveErrorMessage)
             }
         }
         .task {
@@ -65,52 +81,6 @@ struct HomeView: View {
         }
         .onChange(of: viewModel.selectedDate) { _, _ in
             Task { await viewModel.loadDay(context: modelContext) }
-        }
-    }
-
-    // MARK: Date navigator
-
-    private var dateNavigator: some View {
-        HStack {
-            Button {
-                viewModel.goToPreviousDay()
-            } label: {
-                Image(systemName: "chevron.left")
-                    .font(.title3.weight(.semibold))
-                    .frame(width: 44, height: 44)
-            }
-
-            Spacer()
-
-            Button {
-                viewModel.selectedDate = Calendar.current.startOfDay(for: .now)
-            } label: {
-                VStack(spacing: 2) {
-                    Text(viewModel.dateTitle)
-                        .font(.headline)
-                    Text(viewModel.selectedDate.shortDateString)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Text(LocalizationManager.shared.language == .french ? "↩ Aujourd'hui" : "↩ Today")
-                        .font(.caption2)
-                        .foregroundStyle(Color.accentColor)
-                        .opacity(viewModel.isToday ? 0 : 1)
-                }
-            }
-            .buttonStyle(.plain)
-            .disabled(viewModel.isToday)
-
-            Spacer()
-
-            Button {
-                viewModel.goToNextDay()
-            } label: {
-                Image(systemName: "chevron.right")
-                    .font(.title3.weight(.semibold))
-                    .frame(width: 44, height: 44)
-            }
-            .opacity(viewModel.canGoForward ? 1 : 0.3)
-            .disabled(!viewModel.canGoForward)
         }
     }
 
@@ -173,9 +143,15 @@ struct HomeView: View {
                 .padding(.vertical, 40)
             }
 
+            // Weekly summary
+            if viewModel.recentSnapshots.count >= 2 {
+                weeklySummarySection
+            }
+
             if showSleep    { sleepSection }
             if showCardiac  { cardiacSection }
             if showActivity { activitySection }
+            if showBP       { bloodPressureSection }
             if showCycle    { cycleSection }
             if showWeather  { weatherSection }
             if showMood     { moodSection }
@@ -429,6 +405,83 @@ struct HomeView: View {
         .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 
+    // MARK: Blood Pressure
+
+    private var bloodPressureSection: some View {
+        let snap = viewModel.todaySnapshot
+        return VStack(alignment: .leading, spacing: 14) {
+            HStack {
+                sectionHeader(L10n.sectionBloodPressure, icon: "heart.text.clipboard")
+                Spacer()
+                HStack(spacing: 10) {
+                    legendDot(.red,  L10n.systolic)
+                    legendDot(.blue, L10n.diastolic)
+                }
+                .font(.caption2)
+            }
+
+            if hasChartData {
+                BloodPressureChartView(snapshots: viewModel.recentSnapshots, selectedDate: viewModel.selectedDate)
+                    .frame(height: 150)
+            }
+
+            Divider()
+
+            HStack(spacing: 8) {
+                MetricChip(
+                    emoji: "🫀", title: L10n.systolic,
+                    value: snap?.systolic.map { "\(Int($0)) mmHg" } ?? "—",
+                    accentColor: snap?.systolic != nil ? .red : .secondary
+                )
+                MetricChip(
+                    emoji: "💉", title: L10n.diastolic,
+                    value: snap?.diastolic.map { "\(Int($0)) mmHg" } ?? "—",
+                    accentColor: snap?.diastolic != nil ? .blue : .secondary
+                )
+            }
+        }
+        .padding(16)
+        .background(Color(.secondarySystemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+    }
+
+    // MARK: Weekly Summary
+
+    private var weeklySummarySection: some View {
+        let snaps = viewModel.recentSnapshots
+        let sleepAvg = average(snaps.compactMap(\.sleepDurationHours))
+        let exerciseTotal = snaps.compactMap(\.exerciseMinutes).reduce(0, +)
+        let moodAvg = average(snaps.compactMap(\.moodValence))
+        let hrvAvg = average(snaps.compactMap(\.hrvSDNN))
+
+        return VStack(alignment: .leading, spacing: 12) {
+            sectionHeader(L10n.weeklySummary, icon: "chart.bar.doc.horizontal")
+
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
+                SummaryChip(emoji: "😴", title: L10n.avgSleep,
+                            value: sleepAvg.map { $0.hoursMinutesString } ?? "—",
+                            color: .sleepColor)
+                SummaryChip(emoji: "🏃", title: L10n.totalExercise,
+                            value: exerciseTotal > 0 ? exerciseTotal.minutesFormatted : "—",
+                            color: .activityColor)
+                SummaryChip(emoji: "🧠", title: L10n.avgMood,
+                            value: moodAvg.map { moodLabel($0) } ?? "—",
+                            color: .moodColor)
+                SummaryChip(emoji: "💓", title: L10n.avgHRV,
+                            value: hrvAvg.map { "\(Int($0)) ms" } ?? "—",
+                            color: .pink)
+            }
+        }
+        .padding(16)
+        .background(Color(.secondarySystemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+    }
+
+    private func average(_ values: [Double]) -> Double? {
+        guard !values.isEmpty else { return nil }
+        return values.reduce(0, +) / Double(values.count)
+    }
+
     // MARK: Insight
 
     private var insightSection: some View {
@@ -505,13 +558,15 @@ struct HomeView: View {
 
     private func accentForSection(icon: String) -> Color {
         switch icon {
-        case "moon.fill":           return .sleepColor
-        case "heart.fill":          return .heartColor
-        case "figure.run":          return .activityColor
-        case "drop.fill":           return .pink
-        case "cloud.sun.fill":      return .weatherColor
-        case "brain.head.profile":  return .moodColor
-        default:                    return .accentColor
+        case "moon.fill":                return .sleepColor
+        case "heart.fill":               return .heartColor
+        case "figure.run":               return .activityColor
+        case "heart.text.clipboard":     return .red
+        case "drop.fill":                return .pink
+        case "cloud.sun.fill":           return .weatherColor
+        case "brain.head.profile":       return .moodColor
+        case "chart.bar.doc.horizontal": return .teal
+        default:                         return .accentColor
         }
     }
 
@@ -521,5 +576,35 @@ struct HomeView: View {
         if valence >= -0.2 { return L10n.moodNeutral }
         if valence >= -0.6 { return L10n.moodNegative }
         return L10n.moodVeryNegative
+    }
+}
+
+// MARK: - SummaryChip
+
+private struct SummaryChip: View {
+    let emoji: String
+    let title: String
+    let value: String
+    let color: Color
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 4) {
+                Text(emoji).font(.caption)
+                Text(title)
+                    .font(.caption2.weight(.medium))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+            }
+            Text(value)
+                .font(.callout.weight(.bold))
+                .foregroundStyle(value == "—" ? .secondary : color)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(10)
+        .background(Color(.tertiarySystemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
     }
 }

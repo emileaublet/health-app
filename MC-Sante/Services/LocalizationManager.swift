@@ -344,4 +344,35 @@ enum L10n {
     static var emojiEmotions: String { lang == .french ? "Émotions" : "Emotions" }
     static var emojiNature: String { lang == .french ? "Nature" : "Nature" }
     static var emojiMisc: String { lang == .french ? "Divers" : "Misc" }
+
+    // MARK: Blood Pressure
+    static var sectionBloodPressure: String { lang == .french ? "Tension" : "Blood Pressure" }
+    static var systolic: String { lang == .french ? "Systolique" : "Systolic" }
+    static var diastolic: String { lang == .french ? "Diastolique" : "Diastolic" }
+
+    // MARK: Onboarding — Notifications
+    static var notificationsTitle: String { lang == .french ? "Rappels" : "Reminders" }
+    static var notificationsDescription: String {
+        lang == .french
+            ? "Reçois un rappel chaque soir pour logger ta journée en 30 secondes. Tu pourras modifier l'heure dans les réglages."
+            : "Get a daily evening reminder to log your day in 30 seconds. You can change the time in settings."
+    }
+    static var authorizeNotificationsButton: String { lang == .french ? "Activer les rappels" : "Enable Reminders" }
+
+    // MARK: Weekly Summary
+    static var weeklySummary: String { lang == .french ? "Résumé hebdo" : "Weekly Summary" }
+    static var avgSleep: String { lang == .french ? "Sommeil moy." : "Avg Sleep" }
+    static var totalExercise: String { lang == .french ? "Exercice total" : "Total Exercise" }
+    static var avgMood: String { lang == .french ? "Humeur moy." : "Avg Mood" }
+    static var avgHRV: String { lang == .french ? "HRV moy." : "Avg HRV" }
+    static var noDataYet: String { lang == .french ? "Pas encore de données" : "No data yet" }
+
+    // MARK: Error handling
+    static var saveError: String { lang == .french ? "Erreur de sauvegarde" : "Save error" }
+    static var saveErrorMessage: String {
+        lang == .french
+            ? "Les données n'ont pas pu être enregistrées. Réessayez."
+            : "Data could not be saved. Please try again."
+    }
+    static var ok: String { lang == .french ? "OK" : "OK" }
 }
