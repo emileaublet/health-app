@@ -24,7 +24,7 @@ struct MetricCard: View {
 
             Text(value)
                 .font(.title3.weight(.bold))
-                .foregroundStyle(.primary)
+                .foregroundStyle(accentColor)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
 
@@ -50,9 +50,12 @@ struct MetricCard: View {
             }
         }
         .padding(14)
-        .frame(minHeight: 130)
+        .frame(minHeight: 140)
         .background(Color(.secondarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 14))
+        .overlay(RoundedRectangle(cornerRadius: 14).stroke(accentColor.opacity(0.15), lineWidth: 1))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(title): \(value)")
     }
 }
 
@@ -74,12 +77,25 @@ struct MiniBarChart: View {
             HStack(alignment: .bottom, spacing: barSpacing) {
                 ForEach(Array(data.enumerated()), id: \.offset) { index, val in
                     let ratio = CGFloat(val / safeMax)
-                    let barHeight = max(geo.size.height * ratio, 2)
+                    let barHeight = max(geo.size.height * ratio, 3)
                     let isHighlighted = index == highlightIndex
 
-                    RoundedRectangle(cornerRadius: 2)
-                        .fill(isHighlighted ? color : color.opacity(0.35))
-                        .frame(width: barWidth, height: barHeight)
+                    ZStack(alignment: .top) {
+                        RoundedRectangle(cornerRadius: 2)
+                            .fill(
+                                isHighlighted
+                                    ? LinearGradient(colors: [color, color.opacity(0.7)], startPoint: .top, endPoint: .bottom)
+                                    : LinearGradient(colors: [color.opacity(0.45), color.opacity(0.2)], startPoint: .top, endPoint: .bottom)
+                            )
+                            .frame(width: barWidth, height: barHeight)
+
+                        if isHighlighted {
+                            Circle()
+                                .fill(color)
+                                .frame(width: 5, height: 5)
+                                .offset(y: -7)
+                        }
+                    }
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
@@ -102,19 +118,23 @@ struct MetricCardMissing: View {
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(.secondary)
                 Spacer()
-                Image(systemName: "exclamationmark.triangle.fill")
+                Image(systemName: "minus.circle")
                     .font(.caption)
-                    .foregroundStyle(.orange)
+                    .foregroundStyle(.tertiary)
             }
 
             Text("—")
                 .font(.title3.weight(.bold))
                 .foregroundStyle(.tertiary)
 
+            Text("—")
+                .font(.caption2)
+                .foregroundStyle(.quaternary)
+
             Spacer(minLength: 0)
         }
         .padding(14)
-        .frame(minHeight: 130)
+        .frame(minHeight: 140)
         .background(Color(.secondarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 14))
     }
